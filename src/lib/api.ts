@@ -1,0 +1,67 @@
+import axios from 'axios';
+import { KundaliResponse, KundaliFormData } from '@/types/kundali';
+
+// Base API configuration - Using deployed API
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://72.61.224.232:5001';
+
+// Create axios instance with default config
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Request interceptor for logging/auth
+apiClient.interceptors.request.use(
+  (config) => {
+    // You can add auth tokens here if needed
+    // config.headers.Authorization = `Bearer ${token}`;
+    console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor for error handling
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      // Server responded with error
+      console.error('[API Error]', error.response.status, error.response.data);
+    } else if (error.request) {
+      // No response received
+      console.error('[API Error] No response received:', error.message);
+    } else {
+      // Request setup error
+      console.error('[API Error]', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Kundali/Lagna API
+export const kundaliApi = {
+  /**
+   * Calculate Lagna chart based on birth details
+   */
+  calculateLagna: async (data: KundaliFormData): Promise<KundaliResponse> => {
+    const params = new URLSearchParams({
+      dob: data.dob,
+      tob: data.tob,
+      lat: data.lat.toString(),
+      lon: data.lon.toString(),
+      tz: data.tz.toString(),
+      ayanamsa: data.ayanamsa,
+    });
+
+    const response = await apiClient.get<KundaliResponse>(`/lagna?${params.toString()}`);
+    return response.data;
+  },
+};
+
+export default apiClient;
