@@ -1,8 +1,11 @@
 import axios from 'axios';
 import { KundaliResponse, KundaliFormData } from '@/types/kundali';
 
-// Base API configuration - Using deployed API
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://72.61.224.232:5001';
+// Use local API routes to avoid CORS issues
+// The proxy routes handle forwarding to the correct ports:
+// - Lagna API: port 5001
+// - Auth API: port 5003
+const API_BASE_URL = '';
 
 // Create axios instance with default config
 const apiClient = axios.create({
@@ -44,10 +47,11 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Kundali/Lagna API
+// Kundali/Lagna API - uses local proxy route to avoid CORS
 export const kundaliApi = {
   /**
    * Calculate Lagna chart based on birth details
+   * Uses /api/lagna proxy route which forwards to port 5001
    */
   calculateLagna: async (data: KundaliFormData): Promise<KundaliResponse> => {
     const params = new URLSearchParams({
@@ -59,7 +63,9 @@ export const kundaliApi = {
       ayanamsa: data.ayanamsa,
     });
 
-    const response = await apiClient.get<KundaliResponse>(`/lagna?${params.toString()}`);
+    const response = await apiClient.get<KundaliResponse>(
+      `/api/lagna?${params.toString()}`
+    );
     return response.data;
   },
 };

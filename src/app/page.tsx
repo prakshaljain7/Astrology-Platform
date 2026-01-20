@@ -1,341 +1,351 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, FormEvent } from 'react';
+import { useAuth } from '@/context/AuthContext';
 
-// Zodiac wheel decoration
-function ZodiacWheel({ className }: { className?: string }) {
-  const zodiacSymbols = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"];
-  
+function SunLogo({ className = 'w-16 h-16' }: { className?: string }) {
   return (
-    <div className={`relative ${className}`}>
-      <svg viewBox="0 0 200 200" className="w-full h-full rotate-slow">
-        <defs>
-          <linearGradient id="wheelGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#d4af37" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#7c3aed" stopOpacity="0.3" />
-          </linearGradient>
-        </defs>
-        <circle cx="100" cy="100" r="95" fill="none" stroke="url(#wheelGradient)" strokeWidth="0.5" />
-        <circle cx="100" cy="100" r="80" fill="none" stroke="url(#wheelGradient)" strokeWidth="0.5" />
-        {zodiacSymbols.map((_, i) => (
-          <line
-            key={i}
-            x1="100"
-            y1="5"
-            x2="100"
-            y2="20"
-            stroke="url(#wheelGradient)"
-            strokeWidth="0.5"
-            transform={`rotate(${i * 30} 100 100)`}
-          />
-        ))}
-      </svg>
-      {zodiacSymbols.map((symbol, i) => {
-        const angle = (i * 30 - 90) * (Math.PI / 180);
-        const x = 100 + 65 * Math.cos(angle);
-        const y = 100 + 65 * Math.sin(angle);
-        return (
-          <span
-            key={i}
-            className="absolute text-[10px] text-[#d4af37]/60"
-            style={{
-              left: `${x}%`,
-              top: `${y}%`,
-              transform: "translate(-50%, -50%)",
-            }}
-          >
-            {symbol}
-          </span>
-        );
-      })}
-    </div>
-  );
-}
-
-// Sun icon for branding
-function SunIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      viewBox='0 0 100 100'
+      className={className}
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+    >
       <defs>
-        <linearGradient id="sunGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#d4af37" />
-          <stop offset="100%" stopColor="#f7e7b4" />
+        <linearGradient
+          id='sunGradientLogin'
+          x1='0%'
+          y1='0%'
+          x2='100%'
+          y2='100%'
+        >
+          <stop offset='0%' stopColor='#d4af37' />
+          <stop offset='100%' stopColor='#f7e7b4' />
         </linearGradient>
+        <filter id='glow'>
+          <feGaussianBlur stdDeviation='3' result='coloredBlur' />
+          <feMerge>
+            <feMergeNode in='coloredBlur' />
+            <feMergeNode in='SourceGraphic' />
+          </feMerge>
+        </filter>
       </defs>
-      <circle cx="50" cy="50" r="20" fill="url(#sunGradient)" />
-      {[...Array(12)].map((_, i) => (
+      <circle
+        cx='50'
+        cy='50'
+        r='18'
+        fill='url(#sunGradientLogin)'
+        filter='url(#glow)'
+      />
+      {[...Array(8)].map((_, i) => (
         <line
           key={i}
-          x1="50"
-          y1="15"
-          x2="50"
-          y2="25"
-          stroke="url(#sunGradient)"
-          strokeWidth="3"
-          strokeLinecap="round"
-          transform={`rotate(${i * 30} 50 50)`}
+          x1='50'
+          y1='20'
+          x2='50'
+          y2='28'
+          stroke='url(#sunGradientLogin)'
+          strokeWidth='3'
+          strokeLinecap='round'
+          transform={`rotate(${i * 45} 50 50)`}
         />
       ))}
     </svg>
   );
 }
 
+function ZodiacWheel() {
+  const zodiacSymbols = [
+    '♈',
+    '♉',
+    '♊',
+    '♋',
+    '♌',
+    '♍',
+    '♎',
+    '♏',
+    '♐',
+    '♑',
+    '♒',
+    '♓',
+  ];
+
+  return (
+    <div className='absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden opacity-[0.03]'>
+      <div className='relative w-[800px] h-[800px] rotate-slow'>
+        {zodiacSymbols.map((symbol, i) => (
+          <div
+            key={i}
+            className='absolute text-8xl text-[#d4af37]'
+            style={{
+              left: '50%',
+              top: '50%',
+              transform: `rotate(${i * 30}deg) translateY(-350px) rotate(-${
+                i * 30
+              }deg)`,
+            }}
+          >
+            {symbol}
+          </div>
+        ))}
+        {/* Inner ring */}
+        <div className='absolute inset-[100px] border border-[#d4af37]/30 rounded-full' />
+        {/* Outer ring */}
+        <div className='absolute inset-0 border border-[#d4af37]/20 rounded-full' />
+      </div>
+    </div>
+  );
+}
+
 export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState("");
-  const [resetSent, setResetSent] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const { login, isLoading } = useAuth();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    router.push("/dashboard");
-  };
+    setError('');
 
-  const handleForgotPassword = (e: React.FormEvent) => {
-    e.preventDefault();
-    setResetSent(true);
-    setTimeout(() => {
-      setResetSent(false);
-      setShowForgotPassword(false);
-      setForgotEmail("");
-    }, 3000);
+    if (!username.trim() || !password.trim()) {
+      setError('Please enter both username and password');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await login(username, password);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <main className="relative min-h-screen aurora-bg overflow-hidden">
-      {/* Zodiac wheel decoration - left side */}
-      <div className="hidden lg:block absolute left-[-100px] top-1/2 -translate-y-1/2 w-[400px] h-[400px] opacity-40">
-        <ZodiacWheel className="w-full h-full" />
-      </div>
+    <div className='min-h-screen aurora-bg relative flex items-center justify-center p-4'>
+      <ZodiacWheel />
 
-      {/* Zodiac wheel decoration - right side */}
-      <div className="hidden lg:block absolute right-[-150px] bottom-[-100px] w-[350px] h-[350px] opacity-30">
-        <ZodiacWheel className="w-full h-full" />
-      </div>
+      {/* Floating orbs */}
+      <div className='absolute top-20 left-20 w-32 h-32 bg-gradient-to-br from-[#f6c1cc]/40 to-transparent rounded-full blur-2xl float-animation' />
+      <div
+        className='absolute bottom-32 right-20 w-48 h-48 bg-gradient-to-br from-[#e6ddff]/40 to-transparent rounded-full blur-3xl float-animation'
+        style={{ animationDelay: '-2s' }}
+      />
+      <div
+        className='absolute top-1/3 right-1/4 w-24 h-24 bg-gradient-to-br from-[#c9e6ff]/40 to-transparent rounded-full blur-2xl float-animation'
+        style={{ animationDelay: '-4s' }}
+      />
 
-      {/* Main content */}
-      <div className="relative z-10 min-h-screen flex">
-        {/* Left panel - branding (hidden on mobile) */}
-        <div className="hidden lg:flex lg:w-1/2 flex-col justify-center items-center p-12">
-          <div className="max-w-md text-center">
-            <SunIcon className="w-24 h-24 mx-auto mb-8 float-animation" />
-            <h1 
-              className="text-5xl font-semibold mb-4 tracking-tight shimmer-gold"
+      {/* Login Card */}
+      <div className='relative z-10 w-full max-w-md animate-fadeIn'>
+        <div className='glass-card rounded-3xl p-8 md:p-10'>
+          {/* Logo and Title */}
+          <div className='text-center mb-8'>
+            <div className='flex justify-center mb-4'>
+              <div className='relative'>
+                <SunLogo className='w-20 h-20' />
+                <div className='absolute inset-0 bg-[#d4af37]/20 rounded-full blur-xl pulse-soft' />
+              </div>
+            </div>
+            <h1
+              className='text-3xl font-bold text-[#2b2e38] mb-2'
               style={{ fontFamily: 'var(--font-playfair)' }}
             >
-              Astrologers
-              <span className="block">Portal</span>
+              Astrologers Portal
             </h1>
-            <p className="text-[#4a4860] text-lg leading-relaxed">
-              Your professional platform for celestial guidance and astrological consultations.
-            </p>
-            
-            {/* Feature highlights */}
-            <div className="mt-12 grid grid-cols-3 gap-6 text-center">
-              {[
-                { icon: "☉", label: "Birth Charts" },
-                { icon: "☽", label: "Moon Phases" },
-                { icon: "✧", label: "Predictions" },
-              ].map((item) => (
-                <div key={item.label} className="group">
-                  <div className="text-2xl mb-2 text-[#d4af37] group-hover:scale-110 transition-transform">
-                    {item.icon}
-                  </div>
-                  <div className="text-xs text-[#6b7280] uppercase tracking-wider">
-                    {item.label}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <p className='text-[#6b7280]'>Enter your credentials to continue</p>
           </div>
-        </div>
 
-        {/* Right panel - login form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
-          <div className="w-full max-w-[420px]">
-            {/* Mobile logo */}
-            <div className="lg:hidden text-center mb-10">
-              <SunIcon className="w-16 h-16 mx-auto mb-4" />
-              <h1 
-                className="text-3xl font-semibold shimmer-gold"
-                style={{ fontFamily: 'var(--font-playfair)' }}
+          {/* Error Message */}
+          {error && (
+            <div className='mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm animate-fadeIn'>
+              <div className='flex items-center gap-2'>
+                <svg
+                  className='w-5 h-5 flex-shrink-0'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  stroke='currentColor'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                  />
+                </svg>
+                {error}
+              </div>
+            </div>
+          )}
+
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className='space-y-5'>
+            <div>
+              <label
+                htmlFor='username'
+                className='block text-sm font-medium text-[#2b2e38] mb-2'
               >
-                Astrologers Portal
-              </h1>
+                Username
+              </label>
+              <div className='relative'>
+                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
+                  <svg
+                    className='w-5 h-5 text-[#9ca3af]'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={1.5}
+                      d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+                    />
+                  </svg>
+                </div>
+                <input
+                  id='username'
+                  type='text'
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder='Enter your username'
+                  className='w-full pl-12 pr-4 py-3.5 rounded-xl border border-[rgba(0,0,0,0.1)] bg-white/90 text-[#2b2e38] placeholder-[#9ca3af] focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all duration-200'
+                  disabled={isSubmitting || isLoading}
+                />
+              </div>
             </div>
 
-            {/* Card */}
-            <div className="glass-card rounded-3xl p-8 lg:p-10">
-              {!showForgotPassword ? (
+            <div>
+              <label
+                htmlFor='password'
+                className='block text-sm font-medium text-[#2b2e38] mb-2'
+              >
+                Password
+              </label>
+              <div className='relative'>
+                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
+                  <svg
+                    className='w-5 h-5 text-[#9ca3af]'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={1.5}
+                      d='M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z'
+                    />
+                  </svg>
+                </div>
+                <input
+                  id='password'
+                  type='password'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder='Enter your password'
+                  className='w-full pl-12 pr-4 py-3.5 rounded-xl border border-[rgba(0,0,0,0.1)] bg-white/90 text-[#2b2e38] placeholder-[#9ca3af] focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all duration-200'
+                  disabled={isSubmitting || isLoading}
+                />
+              </div>
+            </div>
+
+            <button
+              type='submit'
+              disabled={isSubmitting || isLoading}
+              className='w-full py-4 px-6 bg-gradient-to-r from-[#d4af37] to-[#b8962e] text-white font-semibold rounded-xl shadow-lg shadow-[#d4af37]/30 hover:shadow-xl hover:shadow-[#d4af37]/40 hover:from-[#b8962e] hover:to-[#a17f27] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+            >
+              {isSubmitting || isLoading ? (
                 <>
-                  <div className="mb-8">
-                    <h2 className="text-2xl font-semibold text-[#2b2e38] mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
-                      Welcome back
-                    </h2>
-                    <p className="text-[#6b7280] text-sm">
-                      Enter your credentials to access your portal
-                    </p>
-                  </div>
-
-                  <form onSubmit={handleLogin} className="space-y-5">
-                    <div>
-                      <label className="block text-sm font-medium text-[#3b3f4a] mb-2">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3.5 bg-white/80 border border-[rgba(0,0,0,0.08)] rounded-xl text-[#2b2e38] placeholder-[#9ca3af] focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/25 transition-all duration-300"
-                        placeholder="you@example.com"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-[#3b3f4a] mb-2">
-                        Password
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={showPassword ? "text" : "password"}
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="w-full px-4 py-3.5 pr-12 bg-white/80 border border-[rgba(0,0,0,0.08)] rounded-xl text-[#2b2e38] placeholder-[#9ca3af] focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/25 transition-all duration-300"
-                          placeholder="••••••••"
-                          required
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#d4af37] transition-colors"
-                        >
-                          {showPassword ? (
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                            </svg>
-                          ) : (
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                          )}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" className="w-4 h-4 rounded border-[rgba(0,0,0,0.15)] bg-white text-[#d4af37] focus:ring-[#d4af37]/30" />
-                        <span className="text-sm text-[#6b7280]">Remember me</span>
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setShowForgotPassword(true)}
-                        className="text-sm text-[#7c3aed] hover:text-[#d4af37] transition-colors font-medium"
-                      >
-                        Forgot password?
-                      </button>
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full py-4 mt-2 bg-gradient-to-r from-[#d4af37] to-[#f7e7b4] hover:from-[#7c3aed] hover:to-[#a78bfa] text-[#3a2d0b] hover:text-white font-semibold rounded-xl shadow-lg shadow-[#d4af37]/30 hover:shadow-[#7c3aed]/30 transform hover:translate-y-[-2px] transition-all duration-300"
-                    >
-                      Sign In
-                    </button>
-                  </form>
-
-                  <div className="mt-8 pt-6 border-t border-[rgba(0,0,0,0.06)] text-center">
-                    <p className="text-[#6b7280] text-sm">
-                      Don&apos;t have an account?{" "}
-                      <button className="text-[#7c3aed] hover:text-[#d4af37] font-medium transition-colors">
-                        Contact Admin
-                      </button>
-                    </p>
-                  </div>
+                  <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin' />
+                  Signing in...
                 </>
               ) : (
                 <>
-                  <button
-                    onClick={() => {
-                      setShowForgotPassword(false);
-                      setResetSent(false);
-                      setForgotEmail("");
-                    }}
-                    className="flex items-center gap-2 text-[#6b7280] hover:text-[#2b2e38] transition-colors mb-6"
+                  <svg
+                    className='w-5 h-5'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    Back
-                  </button>
-
-                  <div className="mb-8">
-                    <div className="w-14 h-14 bg-gradient-to-br from-[#f7e7b4] to-[#e6ddff] rounded-2xl flex items-center justify-center mb-4 shadow-md">
-                      <svg className="w-7 h-7 text-[#d4af37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                      </svg>
-                    </div>
-                    <h2 className="text-2xl font-semibold text-[#2b2e38] mb-2" style={{ fontFamily: 'var(--font-playfair)' }}>
-                      Reset Password
-                    </h2>
-                    <p className="text-[#6b7280] text-sm">
-                      Enter your email to receive reset instructions
-                    </p>
-                  </div>
-
-                  {resetSent ? (
-                    <div className="text-center py-6">
-                      <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <p className="text-emerald-600 font-medium mb-2">Email Sent!</p>
-                      <p className="text-[#6b7280] text-sm">
-                        Check your inbox for reset instructions
-                      </p>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleForgotPassword} className="space-y-5">
-                      <div>
-                        <label className="block text-sm font-medium text-[#3b3f4a] mb-2">
-                          Email Address
-                        </label>
-                        <input
-                          type="email"
-                          value={forgotEmail}
-                          onChange={(e) => setForgotEmail(e.target.value)}
-                          className="w-full px-4 py-3.5 bg-white/80 border border-[rgba(0,0,0,0.08)] rounded-xl text-[#2b2e38] placeholder-[#9ca3af] focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/25 transition-all duration-300"
-                          placeholder="you@example.com"
-                          required
-                        />
-                      </div>
-
-                      <button
-                        type="submit"
-                        className="w-full py-4 bg-gradient-to-r from-[#7c3aed] to-[#a78bfa] hover:from-[#d4af37] hover:to-[#f7e7b4] text-white hover:text-[#3a2d0b] font-semibold rounded-xl shadow-lg shadow-[#7c3aed]/30 hover:shadow-[#d4af37]/30 transform hover:translate-y-[-2px] transition-all duration-300"
-                      >
-                        Send Reset Link
-                      </button>
-                    </form>
-                  )}
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1'
+                    />
+                  </svg>
+                  Sign In
                 </>
               )}
-            </div>
+            </button>
+          </form>
 
-            {/* Footer */}
-            <p className="text-center text-[#9ca3af] text-xs mt-8">
-              © 2026 Astrologers Portal. All rights reserved.
+          {/* Footer */}
+          <div className='mt-8 pt-6 border-t border-[rgba(0,0,0,0.06)] text-center'>
+            <p className='text-sm text-[#6b7280]'>
+              <span className='inline-flex items-center gap-1'>
+                <svg
+                  className='w-4 h-4'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  stroke='currentColor'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={1.5}
+                    d='M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z'
+                  />
+                </svg>
+                Secure login powered by JWT
+              </span>
             </p>
           </div>
         </div>
+
+        {/* Role Info */}
+        <div className='mt-6 glass-card rounded-2xl p-5'>
+          <h3 className='text-sm font-semibold text-[#2b2e38] mb-3 flex items-center gap-2'>
+            <svg
+              className='w-4 h-4 text-[#d4af37]'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+              />
+            </svg>
+            Access Levels
+          </h3>
+          <div className='space-y-2 text-xs text-[#6b7280]'>
+            <div className='flex items-center gap-2'>
+              <span className='w-2 h-2 rounded-full bg-[#7c3aed]' />
+              <span>
+                <strong>Super Admin:</strong> Manage organizations
+              </span>
+            </div>
+            <div className='flex items-center gap-2'>
+              <span className='w-2 h-2 rounded-full bg-[#d4af37]' />
+              <span>
+                <strong>Admin:</strong> Manage users in organization
+              </span>
+            </div>
+            <div className='flex items-center gap-2'>
+              <span className='w-2 h-2 rounded-full bg-[#10b981]' />
+              <span>
+                <strong>User:</strong> Access kundali calculator
+              </span>
+            </div>
+          </div>
         </div>
-      </main>
+      </div>
+    </div>
   );
 }
