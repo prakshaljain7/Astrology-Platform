@@ -7,7 +7,6 @@ import {
   planetShort, 
   zodiacSigns, 
   zodiacSymbols,
-  zodiacShort,
   chartTheme,
   cssVars 
 } from "@/lib/theme";
@@ -61,9 +60,6 @@ export function SouthIndianChart({ planets, ascendantSign }: SouthIndianChartPro
     const houseNo = getHouseForSign(sign);
     return planets.filter(p => p.house_no === houseNo);
   };
-  
-  // Check if this sign is the ascendant
-  const isAscendant = (sign: string) => sign === ascendantSign;
 
   return (
     <div 
@@ -115,7 +111,6 @@ export function SouthIndianChart({ planets, ascendantSign }: SouthIndianChartPro
             const y = padding + gridPos.row * cellSize;
             const houseNo = getHouseForSign(sign);
             const signPlanets = getPlanetsInSign(sign);
-            const isAsc = isAscendant(sign);
             
             return (
               <g key={sign}>

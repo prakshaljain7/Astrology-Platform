@@ -243,7 +243,7 @@ export const twClasses = {
 } as const;
 
 // Default export for convenience
-export default {
+const theme = {
   colors,
   planetColors,
   planetShort,
@@ -255,3 +255,5 @@ export default {
   chartTheme,
   twClasses,
 };
+
+export default theme;
