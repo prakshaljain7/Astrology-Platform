@@ -1,24 +1,39 @@
 @import "tailwindcss";
 
+/*
+  Theme colors are defined in /src/lib/theme.ts
+  This file uses CSS custom properties for values that need to be available in CSS
+*/
+
 /* Force light mode - disable dark mode */
 :root,
 html,
 html.light {
   color-scheme: light;
+  
+  /* Core backgrounds */
   --background: #fffdf8;
   --foreground: #2b2e38;
+  
+  /* Brand colors */
   --primary: #7c3aed;
   --primary-light: #a78bfa;
   --accent: #d4af37;
   --accent-light: #f7e7b4;
+  
+  /* Decorative colors */
   --champagne: #f7e7b4;
   --rose: #f6c1cc;
   --sky: #c9e6ff;
   --lavender: #e6ddff;
+  
+  /* Glass/transparency effects */
   --glass-bg: rgba(255, 255, 255, 0.65);
   --card-bg: rgba(255, 255, 255, 0.85);
   --input-bg: rgba(255, 255, 255, 0.9);
   --border-soft: rgba(0, 0, 0, 0.08);
+  
+  /* Text colors */
   --muted: #6b7280;
 }
 
@@ -52,9 +67,9 @@ html.light {
 
 html,
 body {
-  background: #fffdf8 !important;
-  background-color: #fffdf8 !important;
-  color: #2b2e38;
+  background: var(--background) !important;
+  background-color: var(--background) !important;
+  color: var(--foreground);
   font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
@@ -63,11 +78,11 @@ body {
 /* Aurora background - Light theme gradient */
 .aurora-bg {
   background:
-    radial-gradient(1200px 600px at 10% 10%, #f6c1cc, transparent 60%),
-    radial-gradient(900px 500px at 90% 20%, #c9e6ff, transparent 60%),
-    radial-gradient(800px 500px at 50% 90%, #e6ddff, transparent 60%),
-    linear-gradient(135deg, #fffdf8, #f3f6fb) !important;
-  background-color: #fffdf8 !important;
+    radial-gradient(1200px 600px at 10% 10%, var(--rose), transparent 60%),
+    radial-gradient(900px 500px at 90% 20%, var(--sky), transparent 60%),
+    radial-gradient(800px 500px at 50% 90%, var(--lavender), transparent 60%),
+    linear-gradient(135deg, var(--background), #f3f6fb) !important;
+  background-color: var(--background) !important;
 }
 
 /* Subtle animations */
@@ -107,9 +122,9 @@ body {
   background: linear-gradient(
     90deg,
     #8a6c1f,
-    #d4af37,
-    #f7e7b4,
-    #d4af37,
+    var(--accent),
+    var(--accent-light),
+    var(--accent),
     #8a6c1f
   );
   background-size: 200% auto;
@@ -121,10 +136,10 @@ body {
 
 /* Glass card effect - Light theme */
 .glass-card {
-  background: rgba(255, 255, 255, 0.65) !important;
+  background: var(--glass-bg) !important;
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-soft);
   box-shadow:
     0 40px 80px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -146,17 +161,17 @@ select:focus {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d4af37;
+  background: var(--accent);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #7c3aed;
+  background: var(--primary);
 }
 
 /* Selection */
 ::selection {
-  background: #7c3aed;
+  background: var(--primary);
   color: white;
 }
 
@@ -180,8 +195,8 @@ select:focus {
 input,
 select,
 textarea {
-  background-color: rgba(255, 255, 255, 0.85) !important;
-  color: #2b2e38 !important;
+  background-color: var(--card-bg) !important;
+  color: var(--foreground) !important;
 }
 
 input::placeholder,

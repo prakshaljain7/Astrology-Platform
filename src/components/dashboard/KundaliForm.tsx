@@ -13,10 +13,10 @@ interface KundaliFormProps {
 
 export function KundaliForm({ onSubmit, isLoading = false }: KundaliFormProps) {
   const [formData, setFormData] = useState<KundaliFormData>({
-    dob: "1993-02-19",
-    tob: "01:40",
-    lat: 28.6139,
-    lon: 77.209,
+    dob: "1998-01-28",
+    tob: "17:05",
+    lat: 28.61,
+    lon: 77.21,
     tz: 5.5,
     ayanamsa: "lahiri",
   });

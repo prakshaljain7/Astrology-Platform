@@ -1,45 +1,57 @@
 "use client";
 
 import { Ascendant } from "@/types/kundali";
+import { colors, zodiacSymbols, cssVars } from "@/lib/theme";
 
 interface AscendantCardProps {
   ascendant: Ascendant;
   ayanamsa: string;
 }
 
-// Zodiac sign symbols mapping
-const ZODIAC_SYMBOLS: Record<string, string> = {
-  Aries: "♈",
-  Taurus: "♉",
-  Gemini: "♊",
-  Cancer: "♋",
-  Leo: "♌",
-  Virgo: "♍",
-  Libra: "♎",
-  Scorpio: "♏",
-  Sagittarius: "♐",
-  Capricorn: "♑",
-  Aquarius: "♒",
-  Pisces: "♓",
-};
-
 export function AscendantCard({ ascendant, ayanamsa }: AscendantCardProps) {
-  const symbol = ZODIAC_SYMBOLS[ascendant.sign] || "☉";
+  const symbol = zodiacSymbols[ascendant.sign] || "☉";
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-[#fffdf7] to-[#f7f1de] border border-[#d4af37]/35 rounded-2xl p-6 shadow-xl shadow-black/5">
+    <div 
+      className="relative overflow-hidden rounded-2xl p-6 shadow-xl"
+      style={{ 
+        background: `linear-gradient(to bottom right, ${colors.background.primary}, #f7f1de)`,
+        border: `1px solid ${colors.brand.accentBg30}`,
+        boxShadow: `0 25px 50px ${colors.shadow.soft}`
+      }}
+    >
       {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-[#d4af37]/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#e6ddff]/30 rounded-full blur-2xl" />
+      <div 
+        className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl"
+        style={{ backgroundColor: colors.brand.accentBg }}
+      />
+      <div 
+        className="absolute bottom-0 left-0 w-24 h-24 rounded-full blur-2xl"
+        style={{ backgroundColor: colors.decorative.lavenderBg }}
+      />
       
       <div className="relative flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#d4af37] to-[#f7e7b4] flex items-center justify-center shadow-lg shadow-[#d4af37]/30">
-            <span className="text-3xl text-white drop-shadow-sm">{symbol}</span>
+          <div 
+            className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg"
+            style={{ 
+              background: `linear-gradient(to bottom right, ${colors.brand.accent}, ${colors.brand.accentLight})`,
+              boxShadow: `0 10px 30px ${colors.brand.accentBg30}`
+            }}
+          >
+            <span className="text-3xl drop-shadow-sm" style={{ color: colors.text.white }}>{symbol}</span>
           </div>
           <div>
-            <p className="text-[#6b7280] text-sm uppercase tracking-wider font-medium">Ascendant (Lagna)</p>
-            <p className="text-2xl font-semibold text-[#2b2e38]" style={{ fontFamily: 'var(--font-playfair)' }}>
+            <p 
+              className="text-sm uppercase tracking-wider font-medium"
+              style={{ color: colors.text.secondary }}
+            >
+              Ascendant (Lagna)
+            </p>
+            <p 
+              className="text-2xl font-semibold"
+              style={{ color: colors.text.primary, fontFamily: cssVars.fontPlayfair }}
+            >
               {ascendant.sign}
             </p>
           </div>
@@ -47,13 +59,27 @@ export function AscendantCard({ ascendant, ayanamsa }: AscendantCardProps) {
 
         <div className="flex items-center gap-8">
           <div className="text-center">
-            <p className="text-[#6b7280] text-xs uppercase tracking-wider font-medium">Degree</p>
-            <p className="text-xl font-semibold text-[#d4af37]">{ascendant.degree}°</p>
+            <p 
+              className="text-xs uppercase tracking-wider font-medium"
+              style={{ color: colors.text.secondary }}
+            >
+              Degree
+            </p>
+            <p className="text-xl font-semibold" style={{ color: colors.brand.accent }}>
+              {ascendant.degree}°
+            </p>
           </div>
           
           <div className="text-center">
-            <p className="text-[#6b7280] text-xs uppercase tracking-wider font-medium">Ayanamsa</p>
-            <p className="text-lg text-[#2b2e38] capitalize font-medium">{ayanamsa}</p>
+            <p 
+              className="text-xs uppercase tracking-wider font-medium"
+              style={{ color: colors.text.secondary }}
+            >
+              Ayanamsa
+            </p>
+            <p className="text-lg capitalize font-medium" style={{ color: colors.text.primary }}>
+              {ayanamsa}
+            </p>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { ButtonHTMLAttributes, forwardRef } from "react";
+import { colors } from "@/lib/theme";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "gold";
@@ -29,20 +30,20 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary: `
-        bg-gradient-to-r from-[#7c3aed] to-[#a78bfa]
-        hover:from-[#6d28d9] hover:to-[#8b5cf6]
-        text-white shadow-[#7c3aed]/20 hover:shadow-[#7c3aed]/30
+        bg-gradient-to-r from-[${colors.brand.primary}] to-[${colors.brand.primaryLight}]
+        hover:from-[${colors.brand.primaryDark}] hover:to-[${colors.brand.primary}]
+        text-white shadow-[${colors.brand.primary}]/20 hover:shadow-[${colors.brand.primary}]/30
         hover:translate-y-[-2px]
       `,
       secondary: `
-        bg-white border border-[rgba(0,0,0,0.08)]
-        text-[#2b2e38] hover:border-[#d4af37]
+        bg-white border border-[${colors.border.soft}]
+        text-[${colors.text.primary}] hover:border-[${colors.brand.accent}]
         hover:translate-y-[-2px] shadow-sm
       `,
       gold: `
-        bg-gradient-to-r from-[#d4af37] to-[#f7e7b4]
-        hover:from-[#c4a030] hover:to-[#e8d8a5]
-        text-[#3a2d0b] shadow-[#d4af37]/40 hover:shadow-[#d4af37]/50
+        bg-gradient-to-r from-[${colors.brand.accent}] to-[${colors.brand.accentLight}]
+        hover:from-[${colors.brand.accentDark}] hover:to-[${colors.brand.accentDarker}]
+        text-[#3a2d0b] shadow-[${colors.brand.accent}]/40 hover:shadow-[${colors.brand.accent}]/50
         hover:translate-y-[-2px]
       `,
     };

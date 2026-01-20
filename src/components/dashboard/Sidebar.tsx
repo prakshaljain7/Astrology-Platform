@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { UserRole } from "@/types/auth";
+import { colors, cssVars } from "@/lib/theme";
 
 interface NavItem {
   href: string;
@@ -50,8 +51,8 @@ function SunLogo() {
     <svg viewBox="0 0 100 100" className="w-10 h-10" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="sunGradientSidebar" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#d4af37" />
-          <stop offset="100%" stopColor="#f7e7b4" />
+          <stop offset="0%" stopColor={colors.brand.accent} />
+          <stop offset="100%" stopColor={colors.brand.accentLight} />
         </linearGradient>
       </defs>
       <circle cx="50" cy="50" r="18" fill="url(#sunGradientSidebar)" />
@@ -77,18 +78,21 @@ function getRoleBadge(role: UserRole) {
     case 'super_admin':
       return {
         label: 'Super Admin',
-        color: 'bg-[#7c3aed]/10 text-[#7c3aed]',
+        bgColor: colors.brand.primaryBg,
+        textColor: colors.brand.primary,
       };
     case 'admin':
       return {
         label: 'Admin',
-        color: 'bg-[#d4af37]/10 text-[#d4af37]',
+        bgColor: colors.brand.accentBg,
+        textColor: colors.brand.accent,
       };
     case 'user':
     default:
       return {
         label: 'User',
-        color: 'bg-[#10b981]/10 text-[#10b981]',
+        bgColor: colors.status.successBg,
+        textColor: colors.status.success,
       };
   }
 }
@@ -107,35 +111,53 @@ export function Sidebar() {
   const roleBadge = user ? getRoleBadge(user.role) : null;
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-white/80 backdrop-blur-xl border-r border-[rgba(0,0,0,0.06)] flex flex-col z-50 shadow-xl shadow-black/5">
+    <aside 
+      className="fixed left-0 top-0 h-screen w-64 backdrop-blur-xl flex flex-col z-50 shadow-xl"
+      style={{ 
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        borderRight: `1px solid ${colors.border.light}`,
+        boxShadow: `0 25px 50px ${colors.shadow.soft}`
+      }}
+    >
       {/* Logo */}
-      <div className="p-6 border-b border-[rgba(0,0,0,0.06)]">
+      <div className="p-6" style={{ borderBottom: `1px solid ${colors.border.light}` }}>
         <Link href="/dashboard" className="flex items-center gap-3">
           <SunLogo />
           <div>
-            <h1 className="text-lg font-semibold text-[#2b2e38]" style={{ fontFamily: 'var(--font-playfair)' }}>
+            <h1 
+              className="text-lg font-semibold"
+              style={{ color: colors.text.primary, fontFamily: cssVars.fontPlayfair }}
+            >
               Astrologers
             </h1>
-            <p className="text-xs text-[#d4af37] font-medium">Portal</p>
+            <p className="text-xs font-medium" style={{ color: colors.brand.accent }}>Portal</p>
           </div>
         </Link>
       </div>
 
       {/* User Info */}
       {isAuthenticated && user && (
-        <div className="p-4 border-b border-[rgba(0,0,0,0.06)]">
+        <div className="p-4" style={{ borderBottom: `1px solid ${colors.border.light}` }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d4af37]/20 to-[#7c3aed]/20 flex items-center justify-center">
-              <span className="text-[#2b2e38] font-semibold">
+            <div 
+              className="w-10 h-10 rounded-full flex items-center justify-center"
+              style={{ 
+                background: `linear-gradient(to bottom right, ${colors.brand.accentBg20}, ${colors.brand.primaryBg20})` 
+              }}
+            >
+              <span className="font-semibold" style={{ color: colors.text.primary }}>
                 {user.username.charAt(0).toUpperCase()}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-[#2b2e38] truncate">
+              <p className="text-sm font-medium truncate" style={{ color: colors.text.primary }}>
                 {user.username}
               </p>
               {roleBadge && (
-                <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded-md ${roleBadge.color}`}>
+                <span 
+                  className="inline-block px-2 py-0.5 text-xs font-medium rounded-md"
+                  style={{ backgroundColor: roleBadge.bgColor, color: roleBadge.textColor }}
+                >
                   {roleBadge.label}
                 </span>
               )}
@@ -152,14 +174,27 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`
-                flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
-                ${
-                  isActive
-                    ? "bg-gradient-to-r from-[#f7e7b4]/50 to-[#e6ddff]/50 text-[#d4af37] border border-[#d4af37]/20 shadow-sm"
-                    : "text-[#6b7280] hover:text-[#2b2e38] hover:bg-[#f3f4f6]"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200"
+              style={{
+                background: isActive 
+                  ? `linear-gradient(to right, ${colors.brand.accentBg50}, ${colors.decorative.lavenderBg})` 
+                  : 'transparent',
+                color: isActive ? colors.brand.accent : colors.text.secondary,
+                border: isActive ? `1px solid ${colors.brand.accentBg20}` : '1px solid transparent',
+                boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.04)' : 'none',
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.color = colors.text.primary;
+                  e.currentTarget.style.backgroundColor = colors.background.hover;
                 }
-              `}
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.color = colors.text.secondary;
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }
+              }}
             >
               {item.icon}
               <span className="font-medium">{item.label}</span>
@@ -169,10 +204,19 @@ export function Sidebar() {
       </nav>
 
       {/* Logout section */}
-      <div className="p-4 border-t border-[rgba(0,0,0,0.06)]">
+      <div className="p-4" style={{ borderTop: `1px solid ${colors.border.light}` }}>
         <button
           onClick={logout}
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#6b7280] hover:text-red-500 hover:bg-red-50 transition-all duration-200 w-full"
+          className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 w-full"
+          style={{ color: colors.text.secondary }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = colors.status.error;
+            e.currentTarget.style.backgroundColor = colors.status.errorBg;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = colors.text.secondary;
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }}
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

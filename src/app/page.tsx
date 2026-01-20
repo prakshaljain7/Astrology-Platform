@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { colors, cssVars, zodiacSymbols } from '@/lib/theme';
 
 function SunLogo({ className = 'w-16 h-16' }: { className?: string }) {
   return (
@@ -19,8 +20,8 @@ function SunLogo({ className = 'w-16 h-16' }: { className?: string }) {
           x2='100%'
           y2='100%'
         >
-          <stop offset='0%' stopColor='#d4af37' />
-          <stop offset='100%' stopColor='#f7e7b4' />
+          <stop offset='0%' stopColor={colors.brand.accent} />
+          <stop offset='100%' stopColor={colors.brand.accentLight} />
         </linearGradient>
         <filter id='glow'>
           <feGaussianBlur stdDeviation='3' result='coloredBlur' />
@@ -55,31 +56,19 @@ function SunLogo({ className = 'w-16 h-16' }: { className?: string }) {
 }
 
 function ZodiacWheel() {
-  const zodiacSymbols = [
-    '♈',
-    '♉',
-    '♊',
-    '♋',
-    '♌',
-    '♍',
-    '♎',
-    '♏',
-    '♐',
-    '♑',
-    '♒',
-    '♓',
-  ];
+  const zodiacSigns = Object.values(zodiacSymbols);
 
   return (
     <div className='absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden opacity-[0.03]'>
       <div className='relative w-[800px] h-[800px] rotate-slow'>
-        {zodiacSymbols.map((symbol, i) => (
+        {zodiacSigns.map((symbol, i) => (
           <div
             key={i}
-            className='absolute text-8xl text-[#d4af37]'
+            className='absolute text-8xl'
             style={{
               left: '50%',
               top: '50%',
+              color: colors.brand.accent,
               transform: `rotate(${i * 30}deg) translateY(-350px) rotate(-${
                 i * 30
               }deg)`,
@@ -89,9 +78,15 @@ function ZodiacWheel() {
           </div>
         ))}
         {/* Inner ring */}
-        <div className='absolute inset-[100px] border border-[#d4af37]/30 rounded-full' />
+        <div 
+          className='absolute inset-[100px] rounded-full'
+          style={{ border: `1px solid ${colors.brand.accentBg30}` }}
+        />
         {/* Outer ring */}
-        <div className='absolute inset-0 border border-[#d4af37]/20 rounded-full' />
+        <div 
+          className='absolute inset-0 rounded-full'
+          style={{ border: `1px solid ${colors.brand.accentBg20}` }}
+        />
       </div>
     </div>
   );
@@ -128,14 +123,23 @@ export default function LoginPage() {
       <ZodiacWheel />
 
       {/* Floating orbs */}
-      <div className='absolute top-20 left-20 w-32 h-32 bg-gradient-to-br from-[#f6c1cc]/40 to-transparent rounded-full blur-2xl float-animation' />
-      <div
-        className='absolute bottom-32 right-20 w-48 h-48 bg-gradient-to-br from-[#e6ddff]/40 to-transparent rounded-full blur-3xl float-animation'
-        style={{ animationDelay: '-2s' }}
+      <div 
+        className='absolute top-20 left-20 w-32 h-32 rounded-full blur-2xl float-animation'
+        style={{ background: `linear-gradient(to bottom right, ${colors.decorative.roseBg}, transparent)` }}
       />
       <div
-        className='absolute top-1/3 right-1/4 w-24 h-24 bg-gradient-to-br from-[#c9e6ff]/40 to-transparent rounded-full blur-2xl float-animation'
-        style={{ animationDelay: '-4s' }}
+        className='absolute bottom-32 right-20 w-48 h-48 rounded-full blur-3xl float-animation'
+        style={{ 
+          background: `linear-gradient(to bottom right, ${colors.decorative.lavenderBg}, transparent)`,
+          animationDelay: '-2s' 
+        }}
+      />
+      <div
+        className='absolute top-1/3 right-1/4 w-24 h-24 rounded-full blur-2xl float-animation'
+        style={{ 
+          background: `linear-gradient(to bottom right, ${colors.decorative.skyBg}, transparent)`,
+          animationDelay: '-4s' 
+        }}
       />
 
       {/* Login Card */}
@@ -146,21 +150,31 @@ export default function LoginPage() {
             <div className='flex justify-center mb-4'>
               <div className='relative'>
                 <SunLogo className='w-20 h-20' />
-                <div className='absolute inset-0 bg-[#d4af37]/20 rounded-full blur-xl pulse-soft' />
+                <div 
+                  className='absolute inset-0 rounded-full blur-xl pulse-soft'
+                  style={{ backgroundColor: colors.brand.accentBg20 }}
+                />
               </div>
             </div>
             <h1
-              className='text-3xl font-bold text-[#2b2e38] mb-2'
-              style={{ fontFamily: 'var(--font-playfair)' }}
+              className='text-3xl font-bold mb-2'
+              style={{ color: colors.text.primary, fontFamily: cssVars.fontPlayfair }}
             >
               Astrologers Portal
             </h1>
-            <p className='text-[#6b7280]'>Enter your credentials to continue</p>
+            <p style={{ color: colors.text.secondary }}>Enter your credentials to continue</p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className='mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm animate-fadeIn'>
+            <div 
+              className='mb-6 p-4 rounded-xl text-sm animate-fadeIn'
+              style={{ 
+                backgroundColor: colors.status.errorBg,
+                border: `1px solid ${colors.status.errorBorder}`,
+                color: colors.status.errorText
+              }}
+            >
               <div className='flex items-center gap-2'>
                 <svg
                   className='w-5 h-5 flex-shrink-0'
@@ -185,14 +199,16 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor='username'
-                className='block text-sm font-medium text-[#2b2e38] mb-2'
+                className='block text-sm font-medium mb-2'
+                style={{ color: colors.text.primary }}
               >
                 Username
               </label>
               <div className='relative'>
                 <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
                   <svg
-                    className='w-5 h-5 text-[#9ca3af]'
+                    className='w-5 h-5'
+                    style={{ color: colors.text.muted }}
                     fill='none'
                     viewBox='0 0 24 24'
                     stroke='currentColor'
@@ -211,7 +227,19 @@ export default function LoginPage() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder='Enter your username'
-                  className='w-full pl-12 pr-4 py-3.5 rounded-xl border border-[rgba(0,0,0,0.1)] bg-white/90 text-[#2b2e38] placeholder-[#9ca3af] focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all duration-200'
+                  className='w-full pl-12 pr-4 py-3.5 rounded-xl border bg-white/90 transition-all duration-200'
+                  style={{
+                    borderColor: colors.border.medium,
+                    color: colors.text.primary,
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = colors.brand.accent;
+                    e.target.style.boxShadow = `0 0 0 2px ${colors.brand.accentBg20}`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = colors.border.medium;
+                    e.target.style.boxShadow = 'none';
+                  }}
                   disabled={isSubmitting || isLoading}
                 />
               </div>
@@ -220,14 +248,16 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor='password'
-                className='block text-sm font-medium text-[#2b2e38] mb-2'
+                className='block text-sm font-medium mb-2'
+                style={{ color: colors.text.primary }}
               >
                 Password
               </label>
               <div className='relative'>
                 <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
                   <svg
-                    className='w-5 h-5 text-[#9ca3af]'
+                    className='w-5 h-5'
+                    style={{ color: colors.text.muted }}
                     fill='none'
                     viewBox='0 0 24 24'
                     stroke='currentColor'
@@ -246,7 +276,19 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder='Enter your password'
-                  className='w-full pl-12 pr-4 py-3.5 rounded-xl border border-[rgba(0,0,0,0.1)] bg-white/90 text-[#2b2e38] placeholder-[#9ca3af] focus:border-[#d4af37] focus:ring-2 focus:ring-[#d4af37]/20 transition-all duration-200'
+                  className='w-full pl-12 pr-4 py-3.5 rounded-xl border bg-white/90 transition-all duration-200'
+                  style={{
+                    borderColor: colors.border.medium,
+                    color: colors.text.primary,
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = colors.brand.accent;
+                    e.target.style.boxShadow = `0 0 0 2px ${colors.brand.accentBg20}`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = colors.border.medium;
+                    e.target.style.boxShadow = 'none';
+                  }}
                   disabled={isSubmitting || isLoading}
                 />
               </div>
@@ -255,7 +297,22 @@ export default function LoginPage() {
             <button
               type='submit'
               disabled={isSubmitting || isLoading}
-              className='w-full py-4 px-6 bg-gradient-to-r from-[#d4af37] to-[#b8962e] text-white font-semibold rounded-xl shadow-lg shadow-[#d4af37]/30 hover:shadow-xl hover:shadow-[#d4af37]/40 hover:from-[#b8962e] hover:to-[#a17f27] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+              className='w-full py-4 px-6 font-semibold rounded-xl shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+              style={{
+                background: `linear-gradient(to right, ${colors.brand.accent}, ${colors.brand.accentDark})`,
+                color: colors.text.white,
+                boxShadow: `0 10px 30px ${colors.brand.accentBg30}`,
+              }}
+              onMouseEnter={(e) => {
+                if (!isSubmitting && !isLoading) {
+                  e.currentTarget.style.background = `linear-gradient(to right, ${colors.brand.accentDark}, ${colors.brand.accentDarker})`;
+                  e.currentTarget.style.boxShadow = `0 15px 40px ${colors.brand.accentBg50}`;
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = `linear-gradient(to right, ${colors.brand.accent}, ${colors.brand.accentDark})`;
+                e.currentTarget.style.boxShadow = `0 10px 30px ${colors.brand.accentBg30}`;
+              }}
             >
               {isSubmitting || isLoading ? (
                 <>
@@ -284,8 +341,11 @@ export default function LoginPage() {
           </form>
 
           {/* Footer */}
-          <div className='mt-8 pt-6 border-t border-[rgba(0,0,0,0.06)] text-center'>
-            <p className='text-sm text-[#6b7280]'>
+          <div 
+            className='mt-8 pt-6 text-center'
+            style={{ borderTop: `1px solid ${colors.border.light}` }}
+          >
+            <p className='text-sm' style={{ color: colors.text.secondary }}>
               <span className='inline-flex items-center gap-1'>
                 <svg
                   className='w-4 h-4'
@@ -308,9 +368,13 @@ export default function LoginPage() {
 
         {/* Role Info */}
         <div className='mt-6 glass-card rounded-2xl p-5'>
-          <h3 className='text-sm font-semibold text-[#2b2e38] mb-3 flex items-center gap-2'>
+          <h3 
+            className='text-sm font-semibold mb-3 flex items-center gap-2'
+            style={{ color: colors.text.primary }}
+          >
             <svg
-              className='w-4 h-4 text-[#d4af37]'
+              className='w-4 h-4'
+              style={{ color: colors.brand.accent }}
               fill='none'
               viewBox='0 0 24 24'
               stroke='currentColor'
@@ -324,21 +388,30 @@ export default function LoginPage() {
             </svg>
             Access Levels
           </h3>
-          <div className='space-y-2 text-xs text-[#6b7280]'>
+          <div className='space-y-2 text-xs' style={{ color: colors.text.secondary }}>
             <div className='flex items-center gap-2'>
-              <span className='w-2 h-2 rounded-full bg-[#7c3aed]' />
+              <span 
+                className='w-2 h-2 rounded-full'
+                style={{ backgroundColor: colors.brand.primary }}
+              />
               <span>
                 <strong>Super Admin:</strong> Manage organizations
               </span>
             </div>
             <div className='flex items-center gap-2'>
-              <span className='w-2 h-2 rounded-full bg-[#d4af37]' />
+              <span 
+                className='w-2 h-2 rounded-full'
+                style={{ backgroundColor: colors.brand.accent }}
+              />
               <span>
                 <strong>Admin:</strong> Manage users in organization
               </span>
             </div>
             <div className='flex items-center gap-2'>
-              <span className='w-2 h-2 rounded-full bg-[#10b981]' />
+              <span 
+                className='w-2 h-2 rounded-full'
+                style={{ backgroundColor: colors.status.success }}
+              />
               <span>
                 <strong>User:</strong> Access kundali calculator
               </span>

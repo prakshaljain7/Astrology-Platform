@@ -1,45 +1,21 @@
 "use client";
 
-import { House, Planet } from "@/types/kundali";
+import { Planet } from "@/types/kundali";
+import { 
+  colors, 
+  planetColors, 
+  planetShort, 
+  zodiacSigns, 
+  zodiacSymbols,
+  zodiacShort,
+  chartTheme,
+  cssVars 
+} from "@/lib/theme";
 
 interface SouthIndianChartProps {
-  houses: House[];
   planets: Planet[];
   ascendantSign: string;
 }
-
-// Zodiac signs in order
-const ZODIAC_SIGNS = [
-  "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
-  "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
-];
-
-// Short sign names
-const SIGN_SHORT: Record<string, string> = {
-  Aries: "Ar", Taurus: "Ta", Gemini: "Ge", Cancer: "Ca",
-  Leo: "Le", Virgo: "Vi", Libra: "Li", Scorpio: "Sc",
-  Sagittarius: "Sg", Capricorn: "Cp", Aquarius: "Aq", Pisces: "Pi"
-};
-
-// Zodiac symbols
-const ZODIAC_SYMBOLS: Record<string, string> = {
-  Aries: "♈", Taurus: "♉", Gemini: "♊", Cancer: "♋",
-  Leo: "♌", Virgo: "♍", Libra: "♎", Scorpio: "♏",
-  Sagittarius: "♐", Capricorn: "♑", Aquarius: "♒", Pisces: "♓"
-};
-
-// Planet abbreviations
-const PLANET_SHORT: Record<string, string> = {
-  Sun: "Su", Moon: "Mo", Mars: "Ma", Mercury: "Me",
-  Jupiter: "Ju", Venus: "Ve", Saturn: "Sa", Rahu: "Ra", Ketu: "Ke",
-  Uranus: "Ur", Neptune: "Ne", Pluto: "Pl"
-};
-
-// Planet colors
-const PLANET_COLORS: Record<string, string> = {
-  Sun: "#d97706", Moon: "#64748b", Mars: "#dc2626", Mercury: "#059669",
-  Jupiter: "#ca8a04", Venus: "#db2777", Saturn: "#2563eb", Rahu: "#7c3aed", Ketu: "#ea580c"
-};
 
 // South Indian chart - Signs are FIXED at positions
 // Pisces starts at top-left, going clockwise
@@ -50,7 +26,6 @@ const SOUTH_INDIAN_SIGN_POSITIONS: Record<string, number> = {
 };
 
 // Grid positions (row, col) for each of the 12 boxes
-// Layout: 4x4 grid with center 2x2 empty
 const GRID_POSITIONS = [
   { row: 0, col: 0 }, // 0 - Pisces
   { row: 0, col: 1 }, // 1 - Aries
@@ -66,47 +41,59 @@ const GRID_POSITIONS = [
   { row: 1, col: 0 }, // 11 - Aquarius
 ];
 
-export function SouthIndianChart({ houses, planets, ascendantSign }: SouthIndianChartProps) {
+export function SouthIndianChart({ planets, ascendantSign }: SouthIndianChartProps) {
   const cellSize = 90;
   const padding = 10;
   const totalSize = cellSize * 4 + padding * 2;
   
   // Get ascendant index
-  const ascIndex = ZODIAC_SIGNS.indexOf(ascendantSign);
+  const ascIndex = zodiacSigns.indexOf(ascendantSign as typeof zodiacSigns[number]);
   
-  // Get house number for a sign
+  // Get house number for a sign based on ascendant
   const getHouseForSign = (sign: string) => {
-    const signIndex = ZODIAC_SIGNS.indexOf(sign);
-    // House number = (signIndex - ascIndex + 12) % 12 + 1
+    const signIndex = zodiacSigns.indexOf(sign as typeof zodiacSigns[number]);
+    if (signIndex === -1 || ascIndex === -1) return 1;
     return ((signIndex - ascIndex + 12) % 12) + 1;
   };
   
-  // Get planets in a sign
-  const getPlanetsInSign = (sign: string) => {
-    const house = houses.find(h => h.sign === sign);
-    if (!house) return [];
-    return planets.filter(p => p.house_no === house.house_no);
+  // Get planets in a sign using house_no from API
+  const getPlanetsInSign = (sign: string): Planet[] => {
+    const houseNo = getHouseForSign(sign);
+    return planets.filter(p => p.house_no === houseNo);
   };
   
   // Check if this sign is the ascendant
   const isAscendant = (sign: string) => sign === ascendantSign;
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm border border-[rgba(0,0,0,0.08)] rounded-2xl p-6 shadow-xl shadow-black/5">
+    <div 
+      className="backdrop-blur-sm rounded-2xl p-6 shadow-xl"
+      style={{ 
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        border: `1px solid ${colors.border.soft}`,
+        boxShadow: `0 25px 50px ${colors.shadow.soft}`
+      }}
+    >
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-[#2b2e38] flex items-center gap-2" style={{ fontFamily: 'var(--font-playfair)' }}>
-          <span className="text-[#7c3aed]">▣</span>
+        <h3 
+          className="text-lg font-semibold flex items-center gap-2"
+          style={{ color: colors.text.primary, fontFamily: cssVars.fontPlayfair }}
+        >
+          <span style={{ color: colors.brand.accent }}>▣</span>
           South Indian Chart
         </h3>
-        <span className="text-xs text-[#6b7280] bg-[#f3f4f6] px-2 py-1 rounded-full">
-          Lagna: {ascendantSign}
+        <span 
+          className="text-xs px-2 py-1 rounded-full"
+          style={{ color: colors.text.secondary, backgroundColor: colors.background.hover }}
+        >
+          Lagna: {ascendantSign} {zodiacSymbols[ascendantSign] || ""}
         </span>
       </div>
       
       <div className="flex justify-center">
         <svg viewBox={`0 0 ${totalSize} ${totalSize}`} className="w-full max-w-[400px] h-auto">
           {/* Background */}
-          <rect x="0" y="0" width={totalSize} height={totalSize} fill="#fffdf8" rx="8" />
+          <rect x="0" y="0" width={totalSize} height={totalSize} fill={chartTheme.background} rx="8" />
           
           {/* Outer border */}
           <rect
@@ -115,13 +102,13 @@ export function SouthIndianChart({ houses, planets, ascendantSign }: SouthIndian
             width={cellSize * 4}
             height={cellSize * 4}
             fill="none"
-            stroke="#d4af37"
+            stroke={chartTheme.borderPrimary}
             strokeWidth="2"
             rx="4"
           />
           
           {/* Draw each sign box */}
-          {ZODIAC_SIGNS.map((sign) => {
+          {zodiacSigns.map((sign) => {
             const posIndex = SOUTH_INDIAN_SIGN_POSITIONS[sign];
             const gridPos = GRID_POSITIONS[posIndex];
             const x = padding + gridPos.col * cellSize;
@@ -138,37 +125,20 @@ export function SouthIndianChart({ houses, planets, ascendantSign }: SouthIndian
                   y={y}
                   width={cellSize}
                   height={cellSize}
-                  fill={isAsc ? "#f7e7b4" : "#ffffff"}
-                  stroke="#e5e7eb"
+                  fill={chartTheme.cardBg}
+                  stroke={chartTheme.borderSecondary}
                   strokeWidth="1"
                 />
                 
-                {/* Ascendant diagonal line */}
-                {isAsc && (
-                  <line
-                    x1={x}
-                    y1={y}
-                    x2={x + 20}
-                    y2={y + 20}
-                    stroke="#d4af37"
-                    strokeWidth="2"
-                  />
-                )}
                 
                 {/* Sign symbol and abbreviation */}
                 <text
                   x={x + 8}
                   y={y + 16}
-                  className="text-[14px] fill-[#d4af37]"
+                  fontSize="14"
+                  fill={chartTheme.signColor}
                 >
-                  {ZODIAC_SYMBOLS[sign]}
-                </text>
-                <text
-                  x={x + 24}
-                  y={y + 16}
-                  className="text-[10px] fill-[#9ca3af]"
-                >
-                  {SIGN_SHORT[sign]}
+                  {zodiacSymbols[sign] || ""}
                 </text>
                 
                 {/* House number */}
@@ -176,12 +146,14 @@ export function SouthIndianChart({ houses, planets, ascendantSign }: SouthIndian
                   x={x + cellSize - 12}
                   y={y + 14}
                   textAnchor="end"
-                  className="text-[10px] fill-[#7c3aed] font-medium"
+                  fontSize="10"
+                  fontWeight="500"
+                  fill={chartTheme.houseNumberColor}
                 >
                   {houseNo}
                 </text>
                 
-                {/* Planets */}
+                {/* Planets - using house_no from API */}
                 <g>
                   {signPlanets.map((planet, idx) => {
                     const col = idx % 3;
@@ -191,10 +163,11 @@ export function SouthIndianChart({ houses, planets, ascendantSign }: SouthIndian
                         key={planet.planet}
                         x={x + 10 + col * 28}
                         y={y + 38 + row * 18}
-                        style={{ fill: PLANET_COLORS[planet.planet] || "#2b2e38" }}
-                        className="text-[12px] font-semibold"
+                        fill={planetColors[planet.planet] || colors.text.primary}
+                        fontSize="12"
+                        fontWeight="600"
                       >
-                        {PLANET_SHORT[planet.planet] || planet.planet.slice(0, 2)}
+                        {planetShort[planet.planet] || planet.planet.slice(0, 2)}
                       </text>
                     );
                   })}
@@ -203,43 +176,34 @@ export function SouthIndianChart({ houses, planets, ascendantSign }: SouthIndian
             );
           })}
           
-          {/* Center area - can show additional info */}
+          {/* Center area */}
           <rect
             x={padding + cellSize}
             y={padding + cellSize}
             width={cellSize * 2}
             height={cellSize * 2}
-            fill="#fafaf9"
-            stroke="#e5e7eb"
+            fill={colors.background.secondary}
+            stroke={chartTheme.borderPrimary}
             strokeWidth="1"
           />
           
-          {/* Center text */}
-          <text
-            x={totalSize / 2}
-            y={totalSize / 2 - 20}
-            textAnchor="middle"
-            className="text-[12px] fill-[#6b7280]"
-          >
-            South Indian
-          </text>
-          <text
-            x={totalSize / 2}
-            y={totalSize / 2}
-            textAnchor="middle"
-            className="text-[14px] fill-[#d4af37] font-semibold"
-            style={{ fontFamily: 'var(--font-playfair)' }}
-          >
-            Kundali
-          </text>
-          <text
-            x={totalSize / 2}
-            y={totalSize / 2 + 20}
-            textAnchor="middle"
-            className="text-[11px] fill-[#7c3aed]"
-          >
-            Asc: {ZODIAC_SYMBOLS[ascendantSign]} {ascendantSign}
-          </text>
+          {/* Center diagonal lines */}
+          <line
+            x1={padding + cellSize}
+            y1={padding + cellSize}
+            x2={padding + cellSize * 3}
+            y2={padding + cellSize * 3}
+            stroke={chartTheme.borderSecondary}
+            strokeWidth="1"
+          />
+          <line
+            x1={padding + cellSize * 3}
+            y1={padding + cellSize}
+            x2={padding + cellSize}
+            y2={padding + cellSize * 3}
+            stroke={chartTheme.borderSecondary}
+            strokeWidth="1"
+          />
         </svg>
       </div>
       
@@ -248,14 +212,16 @@ export function SouthIndianChart({ houses, planets, ascendantSign }: SouthIndian
         {planets.slice(0, 9).map((planet) => (
           <span
             key={planet.planet}
-            className="px-2 py-1 rounded-full bg-[#f3f4f6]"
-            style={{ color: PLANET_COLORS[planet.planet] || "#2b2e38" }}
+            className="px-2 py-1 rounded-full"
+            style={{ 
+              backgroundColor: colors.background.hover,
+              color: planetColors[planet.planet] || colors.text.primary 
+            }}
           >
-            {PLANET_SHORT[planet.planet]} = {planet.planet}
+            {planetShort[planet.planet] || planet.planet.slice(0, 2)} = {planet.planet}
           </span>
         ))}
       </div>
     </div>
   );
 }
-
