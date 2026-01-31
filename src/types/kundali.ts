@@ -61,3 +61,58 @@ export const AYANAMSA_OPTIONS: { value: AyanamsaType; label: string }[] = [
   { value: 'true', label: 'True (Observational)' },
   { value: 'suryasiddhanta', label: 'Surya Siddhanta' },
 ];
+
+// Types for Dasha API (Vimshotri Dasha)
+
+export interface DashaRequestData {
+  dob: string;
+  tob: string;
+  lat: number;
+  lon: number;
+  moon_degree: number;
+}
+
+export interface SubDasha {
+  planet: string;
+  start: string;
+  end: string;
+}
+
+export interface MahaDasha {
+  planet: string;
+  start: string;
+  end: string;
+  sub_dashas: SubDasha[];
+}
+
+export interface DashaResponse {
+  maha_dashas: MahaDasha[];
+}
+
+// Types for BNN API (Bhrigu Nandi Nadi)
+
+export interface BnnRequestData {
+  dob: string;
+  tob: string;
+  lat: number;
+  lon: number;
+  tz: number;
+  ayanamsa: string;
+  years: number;
+}
+
+export interface BnnTriangle {
+  group: string;
+  meaning: string;
+}
+
+export interface BnnEvent {
+  date: string;
+  event: string;
+  houses: number[];
+  jupiter_deg: number;
+  natal_deg: number;
+  triangles: BnnTriangle[];
+}
+
+export type BnnResponse = BnnEvent[];

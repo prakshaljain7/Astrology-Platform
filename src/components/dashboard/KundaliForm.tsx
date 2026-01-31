@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
@@ -9,17 +9,29 @@ import { KundaliFormData, AYANAMSA_OPTIONS } from "@/types/kundali";
 interface KundaliFormProps {
   onSubmit: (data: KundaliFormData) => void;
   isLoading?: boolean;
+  initialData?: KundaliFormData | null;
 }
 
-export function KundaliForm({ onSubmit, isLoading = false }: KundaliFormProps) {
-  const [formData, setFormData] = useState<KundaliFormData>({
-    dob: "1998-01-28",
-    tob: "17:05",
-    lat: 28.61,
-    lon: 77.21,
-    tz: 5.5,
-    ayanamsa: "lahiri",
-  });
+const DEFAULT_FORM_DATA: KundaliFormData = {
+  dob: "1998-01-28",
+  tob: "17:05",
+  lat: 28.61,
+  lon: 77.21,
+  tz: 5.5,
+  ayanamsa: "lahiri",
+};
+
+export function KundaliForm({ onSubmit, isLoading = false, initialData }: KundaliFormProps) {
+  const [formData, setFormData] = useState<KundaliFormData>(
+    initialData || DEFAULT_FORM_DATA
+  );
+
+  // Update form data when initialData changes (e.g., when context loads)
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

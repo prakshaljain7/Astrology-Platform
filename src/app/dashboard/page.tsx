@@ -8,13 +8,23 @@ import { PlanetTable } from "@/components/dashboard/PlanetTable";
 import { NorthIndianChart } from "@/components/dashboard/NorthIndianChart";
 import { SouthIndianChart } from "@/components/dashboard/SouthIndianChart";
 import { kundaliApi } from "@/lib/api";
-import { KundaliResponse, KundaliFormData } from "@/types/kundali";
+import { KundaliFormData } from "@/types/kundali";
+import { useKundaliData } from "@/context/KundaliDataContext";
 import { colors, cssVars } from "@/lib/theme";
 
 export default function DashboardPage() {
-  const [chartData, setChartData] = useState<KundaliResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Use shared context for data persistence across pages
+  const { 
+    formData: savedFormData,
+    setFormData, 
+    kundaliData: chartData, 
+    setKundaliData: setChartData,
+    isLoading,
+    setIsLoading,
+    error,
+    setError
+  } = useKundaliData();
+  
   const [activeChartView, setActiveChartView] = useState<"both" | "north" | "south">("both");
 
   const handleCalculate = async (formData: KundaliFormData) => {
@@ -24,6 +34,8 @@ export default function DashboardPage() {
     try {
       const data = await kundaliApi.calculateLagna(formData);
       setChartData(data);
+      // Save form data to context for use in other pages (like Vimshotri)
+      setFormData(formData);
     } catch (err) {
       setError(
         err instanceof Error 
@@ -53,7 +65,11 @@ export default function DashboardPage() {
 
       {/* Form Card */}
       <div className="glass-card rounded-2xl p-6 mb-8">
-        <KundaliForm onSubmit={handleCalculate} isLoading={isLoading} />
+        <KundaliForm 
+          onSubmit={handleCalculate} 
+          isLoading={isLoading}
+          initialData={savedFormData}
+        />
       </div>
 
       {/* Error Message */}

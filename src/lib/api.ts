@@ -1,5 +1,12 @@
 import axios from 'axios';
-import { KundaliResponse, KundaliFormData } from '@/types/kundali';
+import {
+  KundaliResponse,
+  KundaliFormData,
+  DashaRequestData,
+  DashaResponse,
+  BnnRequestData,
+  BnnResponse,
+} from '@/types/kundali';
 
 // Use local API routes to avoid CORS issues
 // The proxy routes handle forwarding to the correct ports:
@@ -26,7 +33,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor for error handling
@@ -44,7 +51,7 @@ apiClient.interceptors.response.use(
       console.error('[API Error]', error.message);
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 // Kundali/Lagna API - uses local proxy route to avoid CORS
@@ -64,7 +71,43 @@ export const kundaliApi = {
     });
 
     const response = await apiClient.get<KundaliResponse>(
-      `/api/lagna?${params.toString()}`
+      `/api/lagna?${params.toString()}`,
+    );
+    return response.data;
+  },
+};
+
+// Dasha API - uses local proxy route to avoid CORS
+export const dashaApi = {
+  /**
+   * Compute Vimshotri Dasha based on birth details and moon degree
+   * Uses /api/dasha proxy route which forwards to port 5010
+   */
+  computeDasha: async (data: DashaRequestData): Promise<DashaResponse> => {
+    const response = await apiClient.post<DashaResponse>('/api/dasha', data);
+    return response.data;
+  },
+};
+
+// BNN API - uses local proxy route to avoid CORS
+export const bnnApi = {
+  /**
+   * Compute Bhrigu Nandi Nadi predictions
+   * Uses /api/bnn proxy route which forwards to port 8000
+   */
+  computeBnn: async (data: BnnRequestData): Promise<BnnResponse> => {
+    const params = new URLSearchParams({
+      dob: data.dob,
+      tob: data.tob,
+      lat: data.lat.toString(),
+      lon: data.lon.toString(),
+      tz: data.tz.toString(),
+      ayanamsa: data.ayanamsa,
+      years: data.years.toString(),
+    });
+
+    const response = await apiClient.get<BnnResponse>(
+      `/api/bnn?${params.toString()}`,
     );
     return response.data;
   },

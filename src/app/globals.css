@@ -1,8 +1,9 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /*
   Theme colors are defined in /src/lib/theme.ts
-  This file uses CSS custom properties for values that need to be available in CSS
+  CSS variables are dynamically set by ThemeContext.tsx
+  Default values below are for Cosmic Gold theme (initial render before JS loads)
 */
 
 /* Force light mode - disable dark mode */
@@ -10,39 +11,60 @@
 html,
 html.light {
   color-scheme: light;
-  
+
   /* Core backgrounds */
   --background: #fffdf8;
-  --foreground: #2b2e38;
-  
+  --background-secondary: #faf8f3;
+  --foreground: #3d2e14;
+
   /* Brand colors */
-  --primary: #7c3aed;
-  --primary-light: #a78bfa;
+  --primary: #b8860b;
+  --primary-light: #daa520;
+  --primary-dark: #996f0a;
   --accent: #d4af37;
   --accent-light: #f7e7b4;
-  
+  --accent-dark: #b8962e;
+
+  /* Text colors */
+  --muted: #78716c;
+  --text-light: #57534e;
+
+  /* Aurora gradient colors */
+  --aurora-1: rgba(252, 228, 196, 0.7);
+  --aurora-2: rgba(254, 243, 199, 0.6);
+  --aurora-3: rgba(253, 230, 138, 0.5);
+  --aurora-end: #fef9ef;
+
   /* Decorative colors */
   --champagne: #f7e7b4;
-  --rose: #f6c1cc;
-  --sky: #c9e6ff;
-  --lavender: #e6ddff;
-  
+  --rose: #fce4c4;
+  --sky: #fef3c7;
+  --lavender: #fde68a;
+
   /* Glass/transparency effects */
-  --glass-bg: rgba(255, 255, 255, 0.65);
-  --card-bg: rgba(255, 255, 255, 0.85);
-  --input-bg: rgba(255, 255, 255, 0.9);
-  --border-soft: rgba(0, 0, 0, 0.08);
-  
-  /* Text colors */
-  --muted: #6b7280;
+  --glass-bg: rgba(255, 253, 248, 0.75);
+  --card-bg: rgba(255, 255, 255, 0.88);
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --hover-bg: #fef6e6;
+  --border-soft: rgba(212, 175, 55, 0.18);
+  --border-light: rgba(212, 175, 55, 0.12);
+  --border-gray: #f0e6d2;
+
+  /* Shimmer effect colors */
+  --shimmer-dark: #8a6c1f;
+  --shimmer-main: #d4af37;
+  --shimmer-light: #f7e7b4;
+
+  /* Scrollbar colors */
+  --scrollbar-thumb: #d4af37;
+  --scrollbar-thumb-hover: #b8860b;
+  --scrollbar-track: #faf8f3;
 }
 
 /* Override any dark mode preferences */
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: light;
-    --background: #fffdf8;
-    --foreground: #2b2e38;
   }
 }
 
@@ -73,37 +95,59 @@ body {
   font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
-/* Aurora background - Light theme gradient */
+/* Aurora background - Dynamic theme gradient */
 .aurora-bg {
   background:
-    radial-gradient(1200px 600px at 10% 10%, var(--rose), transparent 60%),
-    radial-gradient(900px 500px at 90% 20%, var(--sky), transparent 60%),
-    radial-gradient(800px 500px at 50% 90%, var(--lavender), transparent 60%),
-    linear-gradient(135deg, var(--background), #f3f6fb) !important;
+    radial-gradient(1200px 600px at 10% 10%, var(--aurora-1), transparent 60%),
+    radial-gradient(900px 500px at 90% 20%, var(--aurora-2), transparent 60%),
+    radial-gradient(800px 500px at 50% 90%, var(--aurora-3), transparent 60%),
+    linear-gradient(135deg, var(--background), var(--aurora-end)) !important;
   background-color: var(--background) !important;
+  transition: background 0.4s ease;
 }
 
 /* Subtle animations */
 @keyframes float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-8px) rotate(1deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
 }
 
 @keyframes pulse-soft {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 @keyframes rotate-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes shimmer-gold {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 .float-animation {
@@ -121,11 +165,11 @@ body {
 .shimmer-gold {
   background: linear-gradient(
     90deg,
-    #8a6c1f,
-    var(--accent),
-    var(--accent-light),
-    var(--accent),
-    #8a6c1f
+    var(--shimmer-dark),
+    var(--shimmer-main),
+    var(--shimmer-light),
+    var(--shimmer-main),
+    var(--shimmer-dark)
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -134,15 +178,20 @@ body {
   animation: shimmer-gold 4s linear infinite;
 }
 
-/* Glass card effect - Light theme */
+/* Glass card effect - Dynamic theme */
 .glass-card {
   background: var(--glass-bg) !important;
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
   border: 1px solid var(--border-soft);
   box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    0 40px 80px rgba(0, 0, 0, 0.06),
+    0 0 60px var(--aurora-1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 /* Input focus styles */
@@ -151,22 +200,23 @@ select:focus {
   outline: none;
 }
 
-/* Custom scrollbar - Light theme */
+/* Custom scrollbar - Dynamic theme */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f3f4f6;
+  background: var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent);
-  border-radius: 3px;
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+  transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* Selection */
@@ -195,11 +245,47 @@ select:focus {
 input,
 select,
 textarea {
-  background-color: var(--card-bg) !important;
+  background-color: var(--input-bg) !important;
   color: var(--foreground) !important;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #9ca3af !important;
+  color: var(--muted) !important;
+}
+
+/* Themed focus ring */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--aurora-1) !important;
+}
+
+/* Additional utility classes for theme consistency */
+.themed-border {
+  border-color: var(--border-gray);
+}
+
+.themed-border-accent {
+  border-color: var(--accent);
+}
+
+.themed-bg-hover:hover {
+  background-color: var(--hover-bg);
+}
+
+.themed-text-primary {
+  color: var(--foreground);
+}
+
+.themed-text-secondary {
+  color: var(--muted);
+}
+
+.themed-text-accent {
+  color: var(--accent);
 }
