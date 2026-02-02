@@ -62,32 +62,24 @@ export const AYANAMSA_OPTIONS: { value: AyanamsaType; label: string }[] = [
   { value: 'suryasiddhanta', label: 'Surya Siddhanta' },
 ];
 
-// Types for Dasha API (Vimshotri Dasha)
+// Types for Dasha API (Vimshotri Mahadasha)
 
 export interface DashaRequestData {
   dob: string;
   tob: string;
-  lat: number;
-  lon: number;
-  moon_degree: number;
-}
-
-export interface SubDasha {
-  planet: string;
-  start: string;
-  end: string;
+  sign: number; // Moon sign number (1-12)
+  degree: number; // Moon degree
 }
 
 export interface MahaDasha {
-  planet: string;
-  start: string;
-  end: string;
-  sub_dashas: SubDasha[];
+  lord: string; // Planet name (e.g., "Moon", "Mars", "Rahu")
+  start: string; // Start date
+  end: string; // End date
+  duration: string; // Duration string (e.g., "6y 3m 2d")
+  current: boolean; // Whether this is the current dasha
 }
 
-export interface DashaResponse {
-  maha_dashas: MahaDasha[];
-}
+export type DashaResponse = MahaDasha[];
 
 // Types for BNN API (Bhrigu Nandi Nadi)
 

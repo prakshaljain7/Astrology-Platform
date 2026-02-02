@@ -80,11 +80,20 @@ export const kundaliApi = {
 // Dasha API - uses local proxy route to avoid CORS
 export const dashaApi = {
   /**
-   * Compute Vimshotri Dasha based on birth details and moon degree
-   * Uses /api/dasha proxy route which forwards to port 5010
+   * Compute Vimshotri Mahadasha based on birth details, moon sign and degree
+   * Uses /api/dasha proxy route which forwards to port 8000
    */
   computeDasha: async (data: DashaRequestData): Promise<DashaResponse> => {
-    const response = await apiClient.post<DashaResponse>('/api/dasha', data);
+    const params = new URLSearchParams({
+      dob: data.dob,
+      tob: data.tob,
+      sign: data.sign.toString(),
+      degree: data.degree.toString(),
+    });
+
+    const response = await apiClient.get<DashaResponse>(
+      `/api/dasha?${params.toString()}`,
+    );
     return response.data;
   },
 };
