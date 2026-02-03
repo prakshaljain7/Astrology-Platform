@@ -4,6 +4,10 @@ import {
   KundaliFormData,
   DashaRequestData,
   DashaResponse,
+  AntarDashaRequestData,
+  AntarDashaResponse,
+  PratyantarDashaRequestData,
+  PratyantarDashaResponse,
   BnnRequestData,
   BnnResponse,
 } from '@/types/kundali';
@@ -93,6 +97,46 @@ export const dashaApi = {
 
     const response = await apiClient.get<DashaResponse>(
       `/api/dasha?${params.toString()}`,
+    );
+    return response.data;
+  },
+
+  /**
+   * Compute Antardasha (sub-periods) for a specific Mahadasha
+   * Uses /api/antardasha proxy route which forwards to port 8000
+   * API: /api/antardasha?lord=Rahu&start=2026-02-02&end=2039-08-04
+   */
+  computeAntardasha: async (
+    data: AntarDashaRequestData,
+  ): Promise<AntarDashaResponse> => {
+    const params = new URLSearchParams({
+      lord: data.lord,
+      start: data.start,
+      end: data.end,
+    });
+
+    const response = await apiClient.get<AntarDashaResponse>(
+      `/api/antardasha?${params.toString()}`,
+    );
+    return response.data;
+  },
+
+  /**
+   * Compute Pratyantardasha (sub-sub-periods) for a specific Antardasha
+   * Uses /api/pratyantardasha proxy route which forwards to port 8000
+   * API: /api/pratyantardasha?lord=Rahu&start=2026-02-02&end=2028-02-11
+   */
+  computePratyantardasha: async (
+    data: PratyantarDashaRequestData,
+  ): Promise<PratyantarDashaResponse> => {
+    const params = new URLSearchParams({
+      lord: data.lord,
+      start: data.start,
+      end: data.end,
+    });
+
+    const response = await apiClient.get<PratyantarDashaResponse>(
+      `/api/pratyantardasha?${params.toString()}`,
     );
     return response.data;
   },

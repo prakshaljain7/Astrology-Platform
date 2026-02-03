@@ -81,6 +81,40 @@ export interface MahaDasha {
 
 export type DashaResponse = MahaDasha[];
 
+// Types for Antardasha API
+export interface AntarDashaRequestData {
+  lord: string; // Mahadasha lord name
+  start: string; // Mahadasha start date
+  end: string; // Mahadasha end date
+}
+
+export interface AntarDasha {
+  lord: string; // Planet name
+  start: string; // Start date
+  end: string; // End date
+  duration: string; // Duration string
+  current: boolean; // Whether this is the current antardasha
+}
+
+export type AntarDashaResponse = AntarDasha[];
+
+// Types for Pratyantardasha API
+export interface PratyantarDashaRequestData {
+  lord: string; // Antardasha lord name
+  start: string; // Antardasha start date
+  end: string; // Antardasha end date
+}
+
+export interface PratyantarDasha {
+  lord: string; // Planet name
+  start: string; // Start date
+  end: string; // End date
+  duration: string; // Duration string
+  current: boolean; // Whether this is the current pratyantardasha
+}
+
+export type PratyantarDashaResponse = PratyantarDasha[];
+
 // Types for BNN API (Bhrigu Nandi Nadi)
 
 export interface BnnRequestData {
