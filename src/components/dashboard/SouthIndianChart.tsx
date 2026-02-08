@@ -1,13 +1,13 @@
 "use client";
 
 import { Planet } from "@/types/kundali";
+import { useTheme } from "@/context/ThemeContext";
 import { 
-  colors, 
   planetColors, 
   planetShort, 
   zodiacSigns, 
   zodiacSymbols,
-  chartTheme,
+  getChartTheme,
   cssVars 
 } from "@/lib/theme";
 
@@ -41,6 +41,9 @@ const GRID_POSITIONS = [
 ];
 
 export function SouthIndianChart({ planets, ascendantSign }: SouthIndianChartProps) {
+  const { themeColors } = useTheme();
+  const chartTheme = getChartTheme(themeColors);
+  
   const cellSize = 90;
   const padding = 10;
   const totalSize = cellSize * 4 + padding * 2;
@@ -65,22 +68,22 @@ export function SouthIndianChart({ planets, ascendantSign }: SouthIndianChartPro
     <div 
       className="backdrop-blur-sm rounded-2xl p-6 shadow-xl"
       style={{ 
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        border: `1px solid ${colors.border.soft}`,
-        boxShadow: `0 25px 50px ${colors.shadow.soft}`
+        backgroundColor: themeColors.background.card,
+        border: `1px solid ${themeColors.border.soft}`,
+        boxShadow: `0 25px 50px ${themeColors.shadow.soft}`
       }}
     >
       <div className="flex items-center justify-between mb-4">
         <h3 
           className="text-lg font-semibold flex items-center gap-2"
-          style={{ color: colors.text.primary, fontFamily: cssVars.fontPlayfair }}
+          style={{ color: themeColors.text.primary, fontFamily: cssVars.fontPlayfair }}
         >
-          <span style={{ color: colors.brand.accent }}>▣</span>
+          <span style={{ color: themeColors.brand.accent }}>▣</span>
           South Indian Chart
         </h3>
         <span 
           className="text-xs px-2 py-1 rounded-full"
-          style={{ color: colors.text.secondary, backgroundColor: colors.background.hover }}
+          style={{ color: themeColors.text.secondary, backgroundColor: themeColors.background.hover }}
         >
           Lagna: {ascendantSign} {zodiacSymbols[ascendantSign] || ""}
         </span>
@@ -158,7 +161,7 @@ export function SouthIndianChart({ planets, ascendantSign }: SouthIndianChartPro
                         key={planet.planet}
                         x={x + 10 + col * 28}
                         y={y + 38 + row * 18}
-                        fill={planetColors[planet.planet] || colors.text.primary}
+                        fill={planetColors[planet.planet] || themeColors.text.primary}
                         fontSize="12"
                         fontWeight="600"
                       >
@@ -177,7 +180,7 @@ export function SouthIndianChart({ planets, ascendantSign }: SouthIndianChartPro
             y={padding + cellSize}
             width={cellSize * 2}
             height={cellSize * 2}
-            fill={colors.background.secondary}
+            fill={themeColors.background.secondary}
             stroke={chartTheme.borderPrimary}
             strokeWidth="1"
           />
@@ -209,8 +212,8 @@ export function SouthIndianChart({ planets, ascendantSign }: SouthIndianChartPro
             key={planet.planet}
             className="px-2 py-1 rounded-full"
             style={{ 
-              backgroundColor: colors.background.hover,
-              color: planetColors[planet.planet] || colors.text.primary 
+              backgroundColor: themeColors.background.hover,
+              color: planetColors[planet.planet] || themeColors.text.primary 
             }}
           >
             {planetShort[planet.planet] || planet.planet.slice(0, 2)} = {planet.planet}

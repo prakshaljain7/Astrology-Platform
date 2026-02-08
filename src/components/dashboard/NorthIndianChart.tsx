@@ -1,13 +1,13 @@
 "use client";
 
 import { Planet } from "@/types/kundali";
+import { useTheme } from "@/context/ThemeContext";
 import { 
-  colors, 
   planetColors, 
   planetShort, 
   zodiacSigns, 
   zodiacSymbols,
-  chartTheme,
+  getChartTheme,
   cssVars 
 } from "@/lib/theme";
 
@@ -57,6 +57,9 @@ const PLANET_CENTER_POSITIONS: Record<number, { x: number; y: number }> = {
 };
 
 export function NorthIndianChart({ planets, ascendantSign }: NorthIndianChartProps) {
+  const { themeColors } = useTheme();
+  const chartTheme = getChartTheme(themeColors);
+  
   const size = 400;
   const margin = 20;
   const inner = size - 2 * margin;
@@ -132,7 +135,7 @@ export function NorthIndianChart({ planets, ascendantSign }: NorthIndianChartPro
                     y={centerPos.y + rowOffset}
           textAnchor="middle"
           dominantBaseline="middle"
-                    fill={planetColors[planet.planet] || colors.text.primary}
+                    fill={planetColors[planet.planet] || themeColors.text.primary}
                     fontSize="11"
                     fontWeight="600"
                   >
@@ -151,22 +154,22 @@ export function NorthIndianChart({ planets, ascendantSign }: NorthIndianChartPro
     <div 
       className="backdrop-blur-sm rounded-2xl p-6 shadow-xl"
       style={{ 
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        border: `1px solid ${colors.border.soft}`,
-        boxShadow: `0 25px 50px ${colors.shadow.soft}`
+        backgroundColor: themeColors.background.card,
+        border: `1px solid ${themeColors.border.soft}`,
+        boxShadow: `0 25px 50px ${themeColors.shadow.soft}`
       }}
     >
       <div className="flex items-center justify-between mb-4">
         <h3 
           className="text-lg font-semibold flex items-center gap-2"
-          style={{ color: colors.text.primary, fontFamily: cssVars.fontPlayfair }}
+          style={{ color: themeColors.text.primary, fontFamily: cssVars.fontPlayfair }}
         >
-          <span style={{ color: colors.brand.accent }}>◇</span>
+          <span style={{ color: themeColors.brand.accent }}>◇</span>
           North Indian Chart
         </h3>
         <span 
           className="text-xs px-2 py-1 rounded-full"
-          style={{ color: colors.text.secondary, backgroundColor: colors.background.hover }}
+          style={{ color: themeColors.text.secondary, backgroundColor: themeColors.background.hover }}
         >
           Lagna: {ascendantSign} {zodiacSymbols[ascendantSign] || ""}
         </span>
@@ -234,8 +237,8 @@ export function NorthIndianChart({ planets, ascendantSign }: NorthIndianChartPro
               key={planet.planet}
             className="px-2 py-1 rounded-full"
             style={{ 
-              backgroundColor: colors.background.hover,
-              color: planetColors[planet.planet] || colors.text.primary 
+              backgroundColor: themeColors.background.hover,
+              color: planetColors[planet.planet] || themeColors.text.primary 
             }}
           >
             {planetShort[planet.planet] || planet.planet.slice(0, 2)} = {planet.planet}

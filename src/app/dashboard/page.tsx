@@ -11,7 +11,8 @@ import { VimshotriDasha } from '@/components/dashboard/VimshotriDasha';
 import { kundaliApi } from '@/lib/api';
 import { KundaliFormData } from '@/types/kundali';
 import { useKundaliData } from '@/context/KundaliDataContext';
-import { colors, cssVars } from '@/lib/theme';
+import { useTheme } from '@/context/ThemeContext';
+import { cssVars } from '@/lib/theme';
 
 export default function DashboardPage() {
   // Use shared context for data persistence across pages
@@ -27,6 +28,8 @@ export default function DashboardPage() {
     getMoonDegree,
     getMoonSignNumber,
   } = useKundaliData();
+
+  const { themeColors } = useTheme();
 
   const [activeChartView, setActiveChartView] = useState<'north' | 'south'>(
     'north',
@@ -63,13 +66,13 @@ export default function DashboardPage() {
         <h1
           className='text-3xl font-semibold mb-2 shimmer-gold'
           style={{
-            color: colors.text.primary,
+            color: themeColors.text.primary,
             fontFamily: cssVars.fontPlayfair,
           }}
         >
           Vedic Lagna Calculator
         </h1>
-        <p style={{ color: colors.text.secondary }}>
+        <p style={{ color: themeColors.text.secondary }}>
           Calculate birth chart with house and planetary positions
         </p>
       </div>
@@ -88,14 +91,14 @@ export default function DashboardPage() {
         <div
           className='mb-8 p-4 rounded-xl'
           style={{
-            backgroundColor: colors.status.errorBg,
-            border: `1px solid ${colors.status.errorBorder}`,
+            backgroundColor: themeColors.status.errorBg,
+            border: `1px solid ${themeColors.status.errorBorder}`,
           }}
         >
           <div className='flex items-center gap-3'>
             <svg
               className='w-5 h-5'
-              style={{ color: colors.status.error }}
+              style={{ color: themeColors.status.error }}
               fill='none'
               viewBox='0 0 24 24'
               stroke='currentColor'
@@ -107,7 +110,7 @@ export default function DashboardPage() {
                 d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
               />
             </svg>
-            <p style={{ color: colors.status.error }}>{error}</p>
+            <p style={{ color: themeColors.status.error }}>{error}</p>
           </div>
         </div>
       )}
@@ -126,8 +129,8 @@ export default function DashboardPage() {
             <div
               className='inline-flex rounded-xl p-1 shadow-sm'
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                border: `1px solid ${colors.border.soft}`,
+                backgroundColor: themeColors.background.card,
+                border: `1px solid ${themeColors.border.soft}`,
               }}
             >
               {[
@@ -143,15 +146,15 @@ export default function DashboardPage() {
                   style={{
                     background:
                       activeChartView === item.key
-                        ? `linear-gradient(to right, ${colors.brand.accent}, ${colors.brand.accentLight})`
+                        ? `linear-gradient(to right, ${themeColors.brand.accent}, ${themeColors.brand.accentLight})`
                         : 'transparent',
                     color:
                       activeChartView === item.key
-                        ? '#3a2d0b'
-                        : colors.text.secondary,
+                        ? themeColors.text.white
+                        : themeColors.text.secondary,
                     boxShadow:
                       activeChartView === item.key
-                        ? '0 2px 8px rgba(0,0,0,0.1)'
+                        ? `0 2px 8px ${themeColors.shadow.soft}`
                         : 'none',
                   }}
                 >
@@ -186,19 +189,19 @@ export default function DashboardPage() {
           {savedFormData && moonDegree !== null && moonSign !== null && (
             <div
               className='mt-12 pt-8'
-              style={{ borderTop: `1px solid ${colors.border.soft}` }}
+              style={{ borderTop: `1px solid ${themeColors.border.soft}` }}
             >
               <div className='mb-6'>
                 <h2
                   className='text-2xl font-semibold mb-2 shimmer-gold'
                   style={{
-                    color: colors.text.primary,
+                    color: themeColors.text.primary,
                     fontFamily: cssVars.fontPlayfair,
                   }}
                 >
                   Vimshotri Dasha
                 </h2>
-                <p style={{ color: colors.text.secondary }}>
+                <p style={{ color: themeColors.text.secondary }}>
                   Planetary periods based on Moon position
                 </p>
               </div>
@@ -221,13 +224,13 @@ export default function DashboardPage() {
           <div
             className='w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center shadow-lg'
             style={{
-              background: `linear-gradient(to bottom right, ${colors.brand.accentBg50}, ${colors.decorative.lavenderBg})`,
-              boxShadow: `0 10px 30px ${colors.brand.accentBg}`,
+              background: `linear-gradient(to bottom right, ${themeColors.brand.accentBg50}, ${themeColors.decorative.lavenderBg})`,
+              boxShadow: `0 10px 30px ${themeColors.brand.accentBg}`,
             }}
           >
             <svg
               className='w-12 h-12'
-              style={{ color: colors.brand.accent }}
+              style={{ color: themeColors.brand.accent }}
               fill='none'
               viewBox='0 0 24 24'
               stroke='currentColor'
@@ -243,7 +246,7 @@ export default function DashboardPage() {
           <h3
             className='text-xl mb-2'
             style={{
-              color: colors.text.primary,
+              color: themeColors.text.primary,
               fontFamily: cssVars.fontPlayfair,
             }}
           >
@@ -251,7 +254,7 @@ export default function DashboardPage() {
           </h3>
           <p
             className='max-w-md mx-auto'
-            style={{ color: colors.text.secondary }}
+            style={{ color: themeColors.text.secondary }}
           >
             Fill in the form above with date, time, and location of birth to
             calculate the Vedic birth chart.

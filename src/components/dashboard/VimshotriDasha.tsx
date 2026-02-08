@@ -11,7 +11,7 @@ import {
   PratyantarDasha,
   PratyantarDashaResponse,
 } from '@/types/kundali';
-import { colors, cssVars, planetColors } from '@/lib/theme';
+import { cssVars, planetColors } from '@/lib/theme';
 
 interface VimshotriDashaProps {
   dob: string;
@@ -193,14 +193,14 @@ export function VimshotriDasha({
       <div
         className='p-4 rounded-xl'
         style={{
-          backgroundColor: colors.status.errorBg,
-          border: `1px solid ${colors.status.errorBorder}`,
+          backgroundColor: themeColors.status.errorBg,
+          border: `1px solid ${themeColors.status.errorBorder}`,
         }}
       >
         <div className='flex items-center gap-3'>
           <svg
             className='w-5 h-5'
-            style={{ color: colors.status.error }}
+            style={{ color: themeColors.status.error }}
             fill='none'
             viewBox='0 0 24 24'
             stroke='currentColor'
@@ -212,7 +212,7 @@ export function VimshotriDasha({
               d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
             />
           </svg>
-          <p style={{ color: colors.status.error }}>{error}</p>
+          <p style={{ color: themeColors.status.error }}>{error}</p>
         </div>
       </div>
     );
@@ -334,7 +334,7 @@ export function VimshotriDasha({
             <div
               className='border-t px-4 py-3'
               style={{
-                borderColor: colors.border.soft,
+                borderColor: themeColors.border.soft,
                 backgroundColor: 'rgba(0,0,0,0.02)',
               }}
             >
@@ -373,7 +373,7 @@ export function VimshotriDasha({
                             backgroundColor: antardasha.current
                               ? `${getPlanetColor(antardasha.lord)}15`
                               : 'rgba(255,255,255,0.5)',
-                            border: `1px solid ${antardasha.current ? getPlanetColor(antardasha.lord) : colors.border.soft}`,
+                            border: `1px solid ${antardasha.current ? getPlanetColor(antardasha.lord) : themeColors.border.soft}`,
                           }}
                         >
                           {/* Antardasha Header */}
@@ -455,7 +455,7 @@ export function VimshotriDasha({
                             <div
                               className='border-t px-3 py-2'
                               style={{
-                                borderColor: colors.border.soft,
+                                borderColor: themeColors.border.soft,
                                 backgroundColor: 'rgba(0,0,0,0.03)',
                               }}
                             >
