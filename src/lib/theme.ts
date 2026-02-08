@@ -1,7 +1,7 @@
 /**
  * Centralized Theme Configuration
  * All colors and styling constants for the Astrologers Portal
- * Includes 4 astrology-themed light color schemes
+ * Includes 6 astrology-themed light color schemes
  */
 
 // ============================================
@@ -12,7 +12,9 @@ export type ThemeId =
   | 'cosmic-gold'
   | 'celestial-blue'
   | 'mystic-rose'
-  | 'sacred-sage';
+  | 'sacred-sage'
+  | 'twilight-violet'
+  | 'sunrise-coral';
 
 export interface ThemeColors {
   background: {
@@ -421,6 +423,166 @@ const sacredSageColors: ThemeColors = {
 };
 
 // ============================================
+// THEME 5: TWILIGHT VIOLET (Saturn/Pluto Energy)
+// ============================================
+
+const twilightVioletColors: ThemeColors = {
+  background: {
+    primary: '#f5f3ff',
+    secondary: '#ede9fe',
+    white: '#ffffff',
+    glass: 'rgba(245, 243, 255, 0.78)',
+    card: 'rgba(255, 255, 255, 0.9)',
+    input: 'rgba(255, 255, 255, 0.95)',
+    hover: '#ddd6fe',
+    tableAlt: '#faf8ff',
+  },
+  text: {
+    primary: '#2e1065',
+    secondary: '#5b21b6',
+    muted: '#8b5cf6',
+    light: '#4c1d95',
+    white: '#ffffff',
+  },
+  brand: {
+    primary: '#7c3aed',
+    primaryLight: '#a78bfa',
+    primaryDark: '#6d28d9',
+    primaryBg: 'rgba(124, 58, 237, 0.12)',
+    primaryBg20: 'rgba(124, 58, 237, 0.2)',
+    accent: '#8b5cf6',
+    accentLight: '#c4b5fd',
+    accentDark: '#7c3aed',
+    accentDarker: '#6d28d9',
+    accentDarkest: '#5b21b6',
+    accentBg: 'rgba(139, 92, 246, 0.12)',
+    accentBg20: 'rgba(139, 92, 246, 0.2)',
+    accentBg30: 'rgba(139, 92, 246, 0.3)',
+    accentBg50: 'rgba(139, 92, 246, 0.5)',
+  },
+  status: {
+    success: '#10b981',
+    successBg: 'rgba(16, 185, 129, 0.1)',
+    error: '#ef4444',
+    errorBg: '#fef2f2',
+    errorBorder: '#fecaca',
+    errorText: '#dc2626',
+    warning: '#f59e0b',
+    info: '#0ea5e9',
+  },
+  decorative: {
+    rose: '#ddd6fe',
+    roseBg: 'rgba(221, 214, 254, 0.5)',
+    sky: '#c4b5fd',
+    skyBg: 'rgba(196, 181, 253, 0.4)',
+    lavender: '#a78bfa',
+    lavenderBg: 'rgba(167, 139, 250, 0.3)',
+    champagne: '#ede9fe',
+  },
+  aurora: {
+    color1: 'rgba(196, 181, 253, 0.6)', // Soft violet
+    color2: 'rgba(167, 139, 250, 0.5)', // Purple
+    color3: 'rgba(221, 214, 254, 0.5)', // Light lavender
+    gradientEnd: '#f3f0ff',
+  },
+  border: {
+    light: 'rgba(139, 92, 246, 0.1)',
+    soft: 'rgba(139, 92, 246, 0.15)',
+    medium: 'rgba(139, 92, 246, 0.22)',
+    gray: '#ddd6fe',
+  },
+  shadow: {
+    soft: 'rgba(139, 92, 246, 0.08)',
+    medium: 'rgba(139, 92, 246, 0.12)',
+  },
+  shimmer: {
+    dark: '#5b21b6',
+    main: '#8b5cf6',
+    light: '#c4b5fd',
+  },
+};
+
+// ============================================
+// THEME 6: SUNRISE CORAL (Mars Energy)
+// ============================================
+
+const sunriseCoralColors: ThemeColors = {
+  background: {
+    primary: '#fff7ed',
+    secondary: '#ffedd5',
+    white: '#ffffff',
+    glass: 'rgba(255, 247, 237, 0.78)',
+    card: 'rgba(255, 255, 255, 0.9)',
+    input: 'rgba(255, 255, 255, 0.95)',
+    hover: '#fed7aa',
+    tableAlt: '#fffaf5',
+  },
+  text: {
+    primary: '#7c2d12',
+    secondary: '#c2410c',
+    muted: '#ea580c',
+    light: '#9a3412',
+    white: '#ffffff',
+  },
+  brand: {
+    primary: '#ea580c',
+    primaryLight: '#fb923c',
+    primaryDark: '#c2410c',
+    primaryBg: 'rgba(234, 88, 12, 0.12)',
+    primaryBg20: 'rgba(234, 88, 12, 0.2)',
+    accent: '#f97316',
+    accentLight: '#fdba74',
+    accentDark: '#ea580c',
+    accentDarker: '#c2410c',
+    accentDarkest: '#9a3412',
+    accentBg: 'rgba(249, 115, 22, 0.12)',
+    accentBg20: 'rgba(249, 115, 22, 0.2)',
+    accentBg30: 'rgba(249, 115, 22, 0.3)',
+    accentBg50: 'rgba(249, 115, 22, 0.5)',
+  },
+  status: {
+    success: '#16a34a',
+    successBg: 'rgba(22, 163, 74, 0.1)',
+    error: '#dc2626',
+    errorBg: '#fef2f2',
+    errorBorder: '#fecaca',
+    errorText: '#dc2626',
+    warning: '#eab308',
+    info: '#2563eb',
+  },
+  decorative: {
+    rose: '#fed7aa',
+    roseBg: 'rgba(254, 215, 170, 0.5)',
+    sky: '#fdba74',
+    skyBg: 'rgba(253, 186, 116, 0.4)',
+    lavender: '#fb923c',
+    lavenderBg: 'rgba(251, 146, 60, 0.3)',
+    champagne: '#ffedd5',
+  },
+  aurora: {
+    color1: 'rgba(254, 215, 170, 0.6)', // Peach
+    color2: 'rgba(253, 186, 116, 0.5)', // Light orange
+    color3: 'rgba(251, 146, 60, 0.4)', // Coral
+    gradientEnd: '#fff9f0',
+  },
+  border: {
+    light: 'rgba(249, 115, 22, 0.1)',
+    soft: 'rgba(249, 115, 22, 0.15)',
+    medium: 'rgba(249, 115, 22, 0.22)',
+    gray: '#fed7aa',
+  },
+  shadow: {
+    soft: 'rgba(249, 115, 22, 0.08)',
+    medium: 'rgba(249, 115, 22, 0.12)',
+  },
+  shimmer: {
+    dark: '#c2410c',
+    main: '#f97316',
+    light: '#fdba74',
+  },
+};
+
+// ============================================
 // ALL THEMES CONFIGURATION
 // ============================================
 
@@ -452,6 +614,20 @@ export const themes: Record<ThemeId, ThemeConfig> = {
     description: 'Mercury & Earth energy - Growth and grounding',
     icon: '☿',
     colors: sacredSageColors,
+  },
+  'twilight-violet': {
+    id: 'twilight-violet',
+    name: 'Twilight Violet',
+    description: 'Saturn & Pluto energy - Mystery, depth, and transformation',
+    icon: '♄',
+    colors: twilightVioletColors,
+  },
+  'sunrise-coral': {
+    id: 'sunrise-coral',
+    name: 'Sunrise Coral',
+    description: 'Mars energy - Passion, action, and courage',
+    icon: '♂',
+    colors: sunriseCoralColors,
   },
 };
 
