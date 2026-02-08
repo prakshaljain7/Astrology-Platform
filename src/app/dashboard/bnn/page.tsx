@@ -487,9 +487,12 @@ export default function BnnPage() {
       )}
 
       {/* Directional Chart - Show when kundali data is available */}
-      {kundaliData && kundaliData.planets && (
+      {kundaliData && kundaliData.planets && kundaliData.ascendant && (
         <div className='mb-6'>
-          <BnnDirectionalChart planets={kundaliData.planets} />
+          <BnnDirectionalChart 
+            planets={kundaliData.planets} 
+            ascendantSign={kundaliData.ascendant.sign}
+          />
         </div>
       )}
 
