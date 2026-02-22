@@ -3,12 +3,26 @@ import { NextRequest, NextResponse } from 'next/server';
 // Lagna API uses port 8000
 const LAGNA_API_URL = 'http://72.61.224.232:8000';
 
-// New API response format
-interface NewApiHouse {
+// New API response format for natal houses
+interface NewApiNatalHouse {
   House: number;
   Planets: string;
   SignName: string;
   SignNo: number;
+}
+
+// New API response format for transit houses
+interface NewApiTransitHouse {
+  House: number;
+  SignName: string;
+  SignNo: number;
+  Transit: string;
+}
+
+// Full API response
+interface NewApiResponse {
+  natal: NewApiNatalHouse[];
+  transit_today: NewApiTransitHouse[];
 }
 
 // Parse planet string like "Sun (29.58°), Mars (28.47°)" into individual planets
@@ -53,12 +67,15 @@ function parsePlanets(
 }
 
 // Transform new API response to old format for compatibility
-function transformResponse(newData: NewApiHouse[], ayanamsa: string) {
+function transformResponse(newData: NewApiResponse, ayanamsa: string) {
+  const natalData = newData.natal;
+  const transitData = newData.transit_today;
+
   // House 1 contains the ascendant sign
-  const house1 = newData.find((h) => h.House === 1);
+  const house1 = natalData.find((h) => h.House === 1);
   const ascendantSign = house1?.SignName || 'Aries';
 
-  // Build planets array
+  // Build natal planets array
   const planets: Array<{
     planet: string;
     sign: string;
@@ -66,15 +83,35 @@ function transformResponse(newData: NewApiHouse[], ayanamsa: string) {
     house_no: number;
   }> = [];
 
-  // Build houses array
-  const houses = newData.map((h) => {
+  // Build houses array from natal data
+  const houses = natalData.map((h) => {
     const housePlanets = parsePlanets(h.Planets, h.House, h.SignName);
     planets.push(...housePlanets);
 
     return {
       house_no: h.House,
       sign: h.SignName,
-      cusp_degree: 0, // Not provided by new API
+      cusp_degree: 0,
+      planets: housePlanets.map((p) => ({ planet: p.planet })),
+    };
+  });
+
+  // Build transit planets array
+  const transitPlanets: Array<{
+    planet: string;
+    sign: string;
+    degree: number;
+    house_no: number;
+  }> = [];
+
+  // Build transit houses array
+  const transitHouses = transitData.map((h) => {
+    const housePlanets = parsePlanets(h.Transit, h.House, h.SignName);
+    transitPlanets.push(...housePlanets);
+
+    return {
+      house_no: h.House,
+      sign: h.SignName,
       planets: housePlanets.map((p) => ({ planet: p.planet })),
     };
   });
@@ -82,11 +119,15 @@ function transformResponse(newData: NewApiHouse[], ayanamsa: string) {
   return {
     ascendant: {
       sign: ascendantSign,
-      degree: 0, // Not provided by new API
+      degree: 0,
     },
     ayanamsa: ayanamsa,
     houses: houses,
     planets: planets,
+    transit: {
+      houses: transitHouses,
+      planets: transitPlanets,
+    },
   };
 }
 
@@ -107,8 +148,8 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const data = await response.json();
-
+    const data: NewApiResponse = await response.json();
+    
     if (!response.ok) {
       return NextResponse.json(data, { status: response.status });
     }

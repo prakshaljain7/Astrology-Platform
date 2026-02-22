@@ -23,11 +23,23 @@ export interface Ascendant {
   degree: number;
 }
 
+export interface TransitHouse {
+  house_no: number;
+  sign: string;
+  planets: HousePlanet[];
+}
+
+export interface TransitData {
+  houses: TransitHouse[];
+  planets: Planet[];
+}
+
 export interface KundaliResponse {
   ascendant: Ascendant;
   ayanamsa: string;
   houses: House[];
   planets: Planet[];
+  transit?: TransitData;
 }
 
 export interface KundaliFormData {
@@ -142,3 +154,42 @@ export interface BnnEvent {
 }
 
 export type BnnResponse = BnnEvent[];
+
+// Types for Divisional Charts (Shodashvarga)
+
+export interface DivisionalHouse {
+  House: number;
+  Planets: string;
+  SignName: string;
+  SignNo: number;
+}
+
+export interface DivisionalChartResponse {
+  [key: string]: DivisionalHouse[];
+}
+
+export type DivisionalChartType = 
+  | 'D2' | 'D3' | 'D4' | 'D7' | 'D9' | 'D10' 
+  | 'D12' | 'D16' | 'D20' | 'D24' | 'D27' | 'D30';
+
+export interface DivisionalChartInfo {
+  id: DivisionalChartType;
+  name: string;
+  meaning: string;
+  endpoint: string;
+}
+
+export const DIVISIONAL_CHARTS: DivisionalChartInfo[] = [
+  { id: 'D2', name: 'Hora', meaning: 'Wealth Chart', endpoint: 'd2' },
+  { id: 'D3', name: 'Drekkana', meaning: 'Siblings/Courage', endpoint: 'd3' },
+  { id: 'D4', name: 'Chaturthamsa', meaning: 'Property/Home', endpoint: 'd4' },
+  { id: 'D7', name: 'Saptamsa', meaning: 'Children', endpoint: 'd7' },
+  { id: 'D9', name: 'Navamsa', meaning: 'Marriage/Dharma', endpoint: 'd9' },
+  { id: 'D10', name: 'Dasamsa', meaning: 'Career/Profession', endpoint: 'd10' },
+  { id: 'D12', name: 'Dvadasamsa', meaning: 'Parents/Karma Lineage', endpoint: 'd12' },
+  { id: 'D16', name: 'Shodasamsa', meaning: 'Vehicles/Luxury', endpoint: 'd16' },
+  { id: 'D20', name: 'Vimsamsa', meaning: 'Spiritual Chart', endpoint: 'd20' },
+  { id: 'D24', name: 'Chaturvimsamsa', meaning: 'Education/Wisdom', endpoint: 'd24' },
+  { id: 'D27', name: 'Bhamsha', meaning: 'Inner Strength', endpoint: 'd27' },
+  { id: 'D30', name: 'Trimsamsa', meaning: 'Misfortune/Karmic Flaws', endpoint: 'd30' },
+];

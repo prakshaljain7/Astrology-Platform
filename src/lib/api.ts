@@ -10,6 +10,7 @@ import {
   PratyantarDashaResponse,
   BnnRequestData,
   BnnResponse,
+  DivisionalChartResponse,
 } from '@/types/kundali';
 
 // Use local API routes to avoid CORS issues
@@ -163,6 +164,55 @@ export const bnnApi = {
       `/api/bnn?${params.toString()}`,
     );
     return response.data;
+  },
+};
+
+// Divisional Charts API - uses local proxy route to avoid CORS
+export const divisionalApi = {
+  /**
+   * Fetch a specific divisional chart (D2, D3, D4, D7, D9, D10, D12, D16, D20, D24, D27, D30)
+   * Uses /api/divisional proxy route which forwards to port 8000
+   */
+  getChart: async (
+    chart: string,
+    formData: KundaliFormData,
+  ): Promise<DivisionalChartResponse> => {
+    const params = new URLSearchParams({
+      chart: chart.toLowerCase(),
+      dob: formData.dob,
+      tob: formData.tob,
+      lat: formData.lat.toString(),
+      lon: formData.lon.toString(),
+      tz: formData.tz.toString(),
+      ayanamsa: formData.ayanamsa,
+    });
+
+    const response = await apiClient.get<DivisionalChartResponse>(
+      `/api/divisional?${params.toString()}`,
+    );
+    return response.data;
+  },
+
+  /**
+   * Fetch multiple divisional charts at once
+   */
+  getMultipleCharts: async (
+    charts: string[],
+    formData: KundaliFormData,
+  ): Promise<Map<string, DivisionalChartResponse>> => {
+    const results = new Map<string, DivisionalChartResponse>();
+    
+    const promises = charts.map(async (chart) => {
+      const data = await divisionalApi.getChart(chart, formData);
+      return { chart, data };
+    });
+
+    const responses = await Promise.all(promises);
+    responses.forEach(({ chart, data }) => {
+      results.set(chart, data);
+    });
+
+    return results;
   },
 };
 
