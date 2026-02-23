@@ -4,7 +4,10 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
+import { CitySearch } from "@/components/ui/CitySearch";
 import { KundaliFormData, AYANAMSA_OPTIONS } from "@/types/kundali";
+import { City } from "@/data/cities";
+import { useTheme } from "@/context/ThemeContext";
 
 interface KundaliFormProps {
   onSubmit: (data: KundaliFormData) => void;
@@ -22,9 +25,11 @@ const DEFAULT_FORM_DATA: KundaliFormData = {
 };
 
 export function KundaliForm({ onSubmit, isLoading = false, initialData }: KundaliFormProps) {
+  const { themeColors } = useTheme();
   const [formData, setFormData] = useState<KundaliFormData>(
     initialData || DEFAULT_FORM_DATA
   );
+  const [selectedCity, setSelectedCity] = useState<string>("");
 
   // Update form data when initialData changes (e.g., when context loads)
   useEffect(() => {
@@ -40,6 +45,16 @@ export function KundaliForm({ onSubmit, isLoading = false, initialData }: Kundal
     setFormData((prev) => ({
       ...prev,
       [name]: type === "number" ? parseFloat(value) : value,
+    }));
+  };
+
+  const handleCitySelect = (city: City) => {
+    setSelectedCity(`${city.name}, ${city.country}`);
+    setFormData((prev) => ({
+      ...prev,
+      lat: city.lat,
+      lon: city.lon,
+      tz: city.tz,
     }));
   };
 
@@ -68,6 +83,23 @@ export function KundaliForm({ onSubmit, isLoading = false, initialData }: Kundal
           onChange={handleChange}
           required
         />
+
+        {/* City Search - spans full width */}
+        <div className="md:col-span-2">
+          <CitySearch
+            label="Birth Place (Search City)"
+            placeholder="Type city name to search..."
+            onSelect={handleCitySelect}
+          />
+          {selectedCity && (
+            <p 
+              className="mt-2 text-sm"
+              style={{ color: themeColors.text.secondary }}
+            >
+              Selected: <span style={{ color: themeColors.brand.accent }}>{selectedCity}</span>
+            </p>
+          )}
+        </div>
 
         <Input
           label="Latitude"
