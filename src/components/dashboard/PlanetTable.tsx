@@ -6,6 +6,7 @@ import { zodiacSymbols, planetColors, cssVars } from "@/lib/theme";
 
 interface PlanetTableProps {
   planets: Planet[];
+  title?: string;
 }
 
 // Planet symbols mapping
@@ -24,7 +25,7 @@ const PLANET_SYMBOLS: Record<string, string> = {
   Pluto: "♇",
 };
 
-export function PlanetTable({ planets }: PlanetTableProps) {
+export function PlanetTable({ planets, title = "Planet Details" }: PlanetTableProps) {
   const { themeColors } = useTheme();
 
   return (
@@ -48,7 +49,7 @@ export function PlanetTable({ planets }: PlanetTableProps) {
           style={{ color: themeColors.text.primary, fontFamily: cssVars.fontPlayfair }}
         >
           <span style={{ color: themeColors.brand.primary }}>✧</span>
-          Planet Details
+          {title}
         </h3>
       </div>
       

@@ -164,26 +164,76 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Kundali Chart - Single View */}
-          <div className='max-w-xl mx-auto'>
-            {activeChartView === 'north' ? (
-              <NorthIndianChart
-                planets={chartData.planets}
-                ascendantSign={chartData.ascendant.sign}
-              />
-            ) : (
-              <SouthIndianChart
-                planets={chartData.planets}
-                ascendantSign={chartData.ascendant.sign}
-              />
+          {/* Charts - Natal and Transit Side by Side */}
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
+            {/* Natal Chart */}
+            <div>
+              <h3
+                className='text-lg font-semibold mb-4 text-center'
+                style={{
+                  color: themeColors.text.primary,
+                  fontFamily: cssVars.fontPlayfair,
+                }}
+              >
+                Natal Chart (Birth)
+              </h3>
+              <div className='max-w-md mx-auto'>
+                {activeChartView === 'north' ? (
+                  <NorthIndianChart
+                    planets={chartData.planets}
+                    ascendantSign={chartData.ascendant.sign}
+                  />
+                ) : (
+                  <SouthIndianChart
+                    planets={chartData.planets}
+                    ascendantSign={chartData.ascendant.sign}
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Transit Today Chart */}
+            {chartData.transit && chartData.transit.planets.length > 0 && (
+              <div>
+                <h3
+                  className='text-lg font-semibold mb-4 text-center'
+                  style={{
+                    color: themeColors.text.primary,
+                    fontFamily: cssVars.fontPlayfair,
+                  }}
+                >
+                  Transit Today
+                </h3>
+                <div className='max-w-md mx-auto'>
+                  {activeChartView === 'north' ? (
+                    <NorthIndianChart
+                      planets={chartData.transit.planets}
+                      ascendantSign={chartData.ascendant.sign}
+                    />
+                  ) : (
+                    <SouthIndianChart
+                      planets={chartData.transit.planets}
+                      ascendantSign={chartData.ascendant.sign}
+                    />
+                  )}
+                </div>
+              </div>
             )}
           </div>
 
           {/* Tables Grid */}
           <div className='grid grid-cols-1 xl:grid-cols-2 gap-8'>
             <HouseTable houses={chartData.houses} />
-            <PlanetTable planets={chartData.planets} />
+            <PlanetTable planets={chartData.planets} title="Natal Planets" />
           </div>
+
+          {/* Transit Planets Table */}
+          {chartData.transit && chartData.transit.planets.length > 0 && (
+            <div className='grid grid-cols-1 xl:grid-cols-2 gap-8'>
+              <div></div>
+              <PlanetTable planets={chartData.transit.planets} title="Transit Planets (Today)" />
+            </div>
+          )}
 
           {/* Vimshotri Dasha Section */}
           {savedFormData && moonDegree !== null && moonSign !== null && (
