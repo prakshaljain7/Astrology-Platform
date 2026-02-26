@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // BNN Days API uses port 5004
-const BNN_CASCADE_API_URL = 'http://72.61.224.232:5004';
+const BNN_CASCADE_API_URL = 'http://72.61.224.232:8000';
 
 export async function GET(request: NextRequest) {
   try {

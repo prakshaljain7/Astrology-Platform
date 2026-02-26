@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // BNN Months API uses port 5004
-const BNN_CASCADE_API_URL = 'http://72.61.224.232:5004';
+const BNN_CASCADE_API_URL = 'http://72.61.224.232:8000';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const queryString = searchParams.toString();
 
-    const response = await fetch(`${BNN_CASCADE_API_URL}/months?${queryString}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `${BNN_CASCADE_API_URL}/months?${queryString}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    });
+    );
 
     const data = await response.json();
 
