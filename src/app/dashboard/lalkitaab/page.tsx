@@ -12,6 +12,11 @@ import {
   getYearIndex,
   HouseData,
 } from '@/lib/lal-kitaab';
+import {
+  LAL_KITAAB_HOUSE_DESCRIPTIONS,
+  getPlanetInHouseDescription,
+  getPlanetDisplayName,
+} from '@/lib/lal-kitaab-descriptions';
 import { NorthIndianChartSvg, SouthIndianChartSvg, ChartPlanet } from '@/components/charts';
 
 // Convert HouseData to planet format expected by chart components
@@ -525,6 +530,103 @@ export default function LalKitaabPage() {
           </table>
         </div>
       </div>
+
+      {/* Lal Kitaab House & Planet Descriptions */}
+      {yearlyHouses && (
+        <div className="glass-card rounded-xl p-6 mt-6">
+          <h3
+            className="text-lg font-semibold mb-4"
+            style={{
+              color: themeColors.text.primary,
+              fontFamily: cssVars.fontPlayfair,
+            }}
+          >
+            Lal Kitaab Descriptions — Houses & Planets ({selectedYear})
+          </h3>
+          <p
+            className="text-sm mb-6"
+            style={{ color: themeColors.text.secondary }}
+          >
+            Below are the significations of each house and the meaning of planets placed in them for your Lal Kitaab Varshphal chart of {selectedYear}.
+          </p>
+          <div className="space-y-6">
+            {yearlyHouses.map((house) => {
+              const houseDesc = LAL_KITAAB_HOUSE_DESCRIPTIONS[house.houseNumber];
+              if (!houseDesc) return null;
+              return (
+                <div
+                  key={house.houseNumber}
+                  className="rounded-lg p-4"
+                  style={{
+                    borderLeft: `4px solid ${themeColors.brand.accent}`,
+                    backgroundColor: themeColors.background.hover,
+                  }}
+                >
+                  <h4
+                    className="font-semibold mb-2"
+                    style={{
+                      color: themeColors.text.primary,
+                      fontFamily: cssVars.fontPlayfair,
+                    }}
+                  >
+                    House {house.houseNumber}: {houseDesc.title}
+                  </h4>
+                  <p
+                    className="text-sm mb-2"
+                    style={{ color: themeColors.text.secondary }}
+                  >
+                    {houseDesc.significations}
+                  </p>
+                  {houseDesc.bodyParts && (
+                    <p
+                      className="text-xs mb-3"
+                      style={{ color: themeColors.text.muted }}
+                    >
+                      Body parts: {houseDesc.bodyParts}. Ruler: {houseDesc.ruler}, Significator: {houseDesc.significator}.
+                    </p>
+                  )}
+                  {house.planets.length > 0 ? (
+                    <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${themeColors.border.light}` }}>
+                      <p
+                        className="text-xs font-medium mb-2"
+                        style={{ color: themeColors.text.primary }}
+                      >
+                        Planets in this house ({selectedYear}):
+                      </p>
+                      <ul className="list-none space-y-2">
+                        {house.planets.map((planetShort) => {
+                          const desc = getPlanetInHouseDescription(planetShort, house.houseNumber);
+                          const name = getPlanetDisplayName(planetShort);
+                          return (
+                            <li
+                              key={planetShort}
+                              className="text-sm pl-3"
+                              style={{
+                                color: themeColors.text.secondary,
+                                borderLeft: `2px solid ${themeColors.brand.accent}`,
+                              }}
+                            >
+                              <strong style={{ color: themeColors.text.primary }}>{name}:</strong>{' '}
+                              {desc ?? `${name} in house ${house.houseNumber} influences the affairs of this house.`}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  ) : (
+                    <p
+                      className="text-xs mt-2 italic"
+                      style={{ color: themeColors.text.muted }}
+                    >
+                      No planets in this house for {selectedYear}.
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Information Section */}
       <div className="glass-card rounded-xl p-6 mt-6">
