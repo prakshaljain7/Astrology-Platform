@@ -4,6 +4,26 @@
  * Only the main prediction paragraph for each planet-house is shown below the chart.
  */
 
+import {
+  LAL_KITAAB_HOUSE_DESCRIPTIONS_HI,
+  PLANET_NAMES_HI,
+  PLANET_IN_HOUSE_HI,
+  PLANET_IN_HOUSE_REMEDIES_HI,
+} from './lal-kitaab-descriptions-hi';
+import {
+  BIRTH_CHART_PLANET_IN_HOUSE_HI,
+  BIRTH_CHART_PLANET_IN_HOUSE_REMEDIES_HI,
+} from './lal-kitaab-birth-chart-hi';
+import {
+  BIRTH_CHART_PLANET_IN_HOUSE,
+  BIRTH_CHART_PLANET_IN_HOUSE_REMEDIES,
+} from './lal-kitaab-birth-chart-en';
+
+export type DescriptionLanguage = 'en' | 'hi';
+
+/** Chart type for Lal Kitaab descriptions: birth chart vs Varshphal (year horoscope). */
+export type LalKitaabChartType = 'birth' | 'varshphal';
+
 export interface HouseDescription {
   title: string;
   significations: string;
@@ -354,21 +374,173 @@ const PLANET_IN_HOUSE: Record<string, string> = {
     'According to Lal Kitab Year horoscope, this year Ketu House is number 12 in your horoscope. House number 12 is influenced by Jupiter and it is also the open sky. Ketu is exalted here. For this reason, the effect of Ketu is good. You are a person who is going to progress in your business. You will get more money from the work of building a house, traveling. Your son will be lucky for you. Your domestic life will be spent well. You are likely to inherit the property from your father. If you have a dog that dies, then you should keep a dog at home, which is auspicious for you.',
 };
 
+/** Remedies/solutions for each planet-house (from LAL KITAB ENGLISH doc) — show as bullet points under description */
+const PLANET_IN_HOUSE_REMEDIES: Record<string, string[]> = {
+  'Su-1': ['If the 5th house in your horoscope is empty, then you should wear the objects of the planets friends of the Sun', 'You should get married before the age of 24', 'You should install a hand pump or natural water source in your ancestral house', 'You should build a dark closet on the left side of your house'],
+  'Su-3': ['Keep your behavior right', 'Help poor children. Seek the blessings of the women of house', 'Take full care of the women of the house', 'Stay away from sins and bad deeds'],
+  'Su-4': ['Even if you have left the ancestral house, you should still feed bread to the blind around that house', "Don't drink alcohol and eat meat", 'Wear a copper coin tied in a khaki thread around your neck', 'Work on gold, silver and cloth', 'Do not work with iron and wood'],
+  'Su-5': ['It will be auspicious to serve three types of dogs i.e., brother-in-law, son-in-law and grandson etc', 'You should make the kitchen in the east direction of your house', 'Serve Birds and Chickens'],
+  'Su-6': ['You should feed jaggery to monkeys', 'After eating dinner, the fire of the stove should be extinguished with milk', 'Ants should be fed seven pulses sawdust', 'Gangajal or silver should be installed in the house', 'Keeping a dog will be auspicious for you'],
+  'Su-7': ['Drink jaggery and water while leaving the house', 'Put 1/4 or part of your bread in the fire', 'Serve the black cow', 'You should give your wife to wear a gold clip in her hair, that is, make the wife wear gold on her head'],
+  'Su-8': ['Worship Lord Vishnu', 'Should not live in a south-facing house', 'Donate 800 grams of wheat and 800 grams of jaggery to the temple for 8 consecutive days from Sunday. Keep in mind Chaturthi, Navami and Chaudas, do not start this work on these dates', 'Put 8 copper coins on the burning pyre in the crematorium', 'Start any new work by eating jaggery and drinking water or consume a little jaggery and water while leaving the house every morning'],
+  'Su-9': ['Never donate rice, silver or milk items', 'Never sell old brass utensils', 'Control your anger and treat everyone equally'],
+  'Su-10': ["Don't wear blue", 'Throw a copper coin in running water for 43 days', 'Always keep Ganga water at your home', 'Install a hand pump inside the house'],
+  'Su-11': ['Keep radish, carrot and turnip near your head for 43 days and donate it to the temple in the morning', "Don't forget to use alcohol, meat and eggs", 'Buy a goat from a butcher and release it in the wild, or donate five milking goats that are equal to your weight'],
+  'Su-12': ['Perform religious activities from time to time', 'Sunlight is essential in your home', "Don't waste money on the property", 'Do not have too much relationship with in-laws'],
+  'Mo-1': ['It is auspicious for you to give water to the roots of big trees', 'You should put copper nails on all four legs of the bed', 'Milk and water should be drunk in a silver vessel', 'Do not use milk and water in glass utensils', 'Donate milk and do not do milk business at all', 'Take silver or rice from the mother and keep it in the house', 'Do not build a house before 24 years', 'Keep the cow in the house in the 24th year or take the services of a maid'],
+  'Mo-2': ['Donate green clothes to girls for 43 days', 'Serve the elderly woman of the family', 'Press silver bricks and silver items into the foundation of the house', 'Keep some part of the house made of raw soil', 'Take rice and silver from your mother and tie it in a white cloth and keep it safe in the house'],
+  'Mo-3': ['Do not take money from your daughter and in-laws', 'Do Kanyadaan', 'Worship the form of Maa Durga', 'It will be auspicious for you to serve and fulfill the needs of the women of the house'],
+  'Mo-4': ['Trading milk is harmful to you', 'Burning milk is harmful to you, i.e. making mawa is harmful to you', 'Welcome the guest who comes to the house with milk', 'Seek the blessings of elderly women in the house', 'You are not afraid of spending, the more money you spend, the more money will come to you', 'Avoid Wrong Mannered Women'],
+  'Mo-5': ['Selfishness and greed are inauspicious for you', 'Walking in Hilly Places is auspicious for you', 'On Monday, tie rice and sugar candy in a white cloth and throw it in running water', 'Make sure to consume jaggery before leaving the house', "Don't speak ill of anyone", 'Do not abuse anyone', 'Doing auspicious work for public welfare will increase your wealth'],
+  'Mo-6': ['You should feed your father with your own hands', "Donating items of the Moon's friendly planets such as Sun, Mars and Jupiter to the temple will be auspicious for you", 'You can donate milk to the temple', 'Arrangements for water in hospitals and crematoriums will be auspicious for you; donating water to any other place will be inauspicious', 'You can use yogurt or paneer', "You should not drink milk at night", 'Serving the rabbit will be auspicious for you'],
+  'Mo-7': ['Keep in mind that you are not married at the age of 24', 'At the time of marriage, take silver items from the in-laws', 'Keep water equal to your weight at home', "Don't trade milk and water", "Don't make milk mawa", "Don't burn milk"],
+  'Mo-8': ['Stay away from lies and deceit', 'Offer 1.25 kg of gram dal on the Shivling in the temple', 'Arrange water in the crematorium', 'Do not build a house in a place where there is already a well', 'Filled the bottle with milk and pressed it in the forest', 'Donate milk at the time of donation of ancestors', 'Stay away from other women', 'Nose-piercing will be auspicious for you', 'Do not consume meat and alcohol', "Don't gamble betting"],
+  'Mo-9': ['Keep your character right', "If you are a doctor, don't give free medicines", "Don't keep dairy animals at home", 'Do not drink milk at night', 'Do not have too much relationship with your in-laws', "Don't help widows", 'Keep rainwater in the house for 10 years', 'Go to any temple every day'],
+  'Mo-10': ["If you are a doctor, don't give free medicines", "Don't keep dairy animals at home", 'Do not drink milk at night', 'Do not have too much relationship with your in-laws', "Don't help widows", 'Keep rainwater in the house for 10 years', 'Go to any temple every day'],
+  'Mo-11': ['Your mother should move away when you have a baby or not see your baby\'s face for 43 days', 'Never use the hand pump', 'Donate milk at Bhairav Temple', 'White Peda Feed 11 children or 11 persons', 'Go to the temple barefoot for 43 days', 'Do not worship at night'],
+  'Mo-12': ['Keep rainwater in the house', 'Start any work only after drinking water', 'Wear gold in the ear', 'Wear gold, silver and copper rings'],
+  'Ma-1': ["Don't work with your brother-in-law", 'The service of people is auspicious for you', 'Donate gram dal or gram flour etc. to the temple', "Don't say anything bad about anyone", 'Do not take goods from anyone for free', 'If you take stuff from someone for free, your blood will turn into water'],
+  'Ma-2': ['Feed jaggery to children in the afternoon', 'Helping others will bring your luck', 'If you insult your brother, you may be harmed', 'Donate rice, silver, milk and water to the temple or to the Gurudwara', "Arrange water in the in-laws' house"],
+  'Ma-3': ['Do not show your arrogance in any work, it is not auspicious for you', 'It would be auspicious to keep ivory at home', 'Honey and sugar business will be inauspicious for you'],
+  'Ma-4': ['Brush your teeth with water every morning', 'Offer sweet milk on the root of the banyan tree and tilak with wet soil', 'Serving Brahmin, Mother and Monkey is auspicious for you', 'Fill honey in an earthen pot and press it in the crematorium', 'Sleeping on the skin of deer is auspicious for you', 'If the door of your house is in the south direction, then put 400 grams of nails in the door frame'],
+  'Ma-5': ['Keep your behavior right', 'Serve the Elders', 'Planting neem saplings will be auspicious for you', 'Avoid transgender intercourse'],
+  'Ma-6': ['Help maternal uncle, aunt, mother, sister, girl and aunt etc. from time to time', 'Worship Lord Ganesha', 'At the time of the birth of the child, distribute snacks along with sweets', 'Take the remedy of Saturn', 'Feed the girls for 6 days'],
+  'Ma-7': ['Do not plant a tree with broad leaves', "Don't raise goats and cows at home", 'Give red clothes to your aunt and sister after marriage'],
+  'Ma-8': ['Give sweet bread to dogs in the tandoor for 43 days. Keep in mind that there should be no iron on the bread', 'Donate rice and gram dal to the temple', 'Do not keep tandoor in the house', "Don't keep ivory at home", 'Make sure to make a closet at the end of the house', 'Eating in the kitchen is auspicious for you', 'Do not insult a widow and keep seeking blessings from the widow', 'Make roti by splashing water on a hot griddle'],
+  'Ma-9': ['You will not be punished by a woman if you do this', 'Donate milk, curd and silver to the temple'],
+  'Ma-10': ['Do not sell the gold ornaments in the house', 'When boiling milk, make sure that the milk does not fall on the ground', 'Ancestral land should not be sold in property', 'If possible, serve the deer'],
+  'Ma-11': ['Keeping honey in the house will be auspicious for you', 'Fill 2 glass jars with jaggery and press it in the desert', "Don't sell ancestral property"],
+  'Ma-12': ['Feeding sweet bread to dogs is auspicious for you', 'Offering water to the sun by adding sweets is auspicious for you', 'The use of a red cap or handkerchief is auspicious for you', 'Donation of batashe in the temple is auspicious for you', 'It is auspicious for you to sleep at night near your head'],
+  'Me-1': ['Sitting in one place and working is auspicious for you', 'Do not consume or use green things', 'Consumption of alcohol and eggs will be inauspicious for you', 'Consuming fish is highly inauspicious for you', "Don't keep the sister-in-law with you", 'Keep water near the head at night and put it in the peepal tree in the morning'],
+  'Me-2': ['Wearing silver for 90 days or keeping your nose pierced for 96 hours will be auspicious for you', 'Do not raise sheep, goats and parrots', 'Brushing your teeth with alum will be auspicious for you', 'Do not trade the factors of the planet Mercury'],
+  'Me-3': ['Give the sun water', 'You will benefit from wearing silver, coral, etc. around your neck', 'Take the blessings of the Virgos', 'Serve the Birds', 'Soak whole moong in water and feed the birds in the morning for 43 days', 'It is auspicious for you to give free asthma medicines'],
+  'Me-4': ['Feed jaggery and chickpeas to the monkey', 'Wearing a silver chain for peace of mind is auspicious for you', 'Stay away from green objects and do not plant trees at home'],
+  'Me-6': ["Your sister and daughter's in-laws should not be in the north direction", 'Before starting any work, you should take the blessings of the girls', "Wearing a silver ring on your wife's left hand will be auspicious for you", 'Bury the bottle of Ganga water in the field ground'],
+  'Me-7': ['You should wear an emerald or diamond', "Don't trade partnerships with anyone", 'Respect and honor sisters as your mother', 'You will benefit from keeping milk or water on the roof', 'Do not change the place of worship in the house frequently', 'Do not break the stairs of the house again and again', 'You will benefit from pressing the items of Mars in the crematorium', "Don't let a girl wear red clothes in the house"],
+  'Me-8': ['You will benefit from keeping milk or water on the roof', 'Do not change the place of worship in the house frequently', 'Do not break the stairs of the house again and again', 'You will benefit from pressing the items of Mars in the crematorium', "Don't let a girl wear red clothes in the house", 'Sleeping with fennel near your head will be auspicious for you', 'Do not take any amulet from any fakir or monk', 'Place the mushroom in an earthen pot and donate it to the temple', 'Parrots, goats never rear', "Don't use green items", 'Wearing a silver ring in the nose is auspicious for you', 'Keep the red colored pills with you', 'Do not sign any paper without reading it', 'Consuming alcohol, meat and eggs will be inauspicious for you'],
+  'Me-9': ['Do not take any amulet from any fakir or monk', 'Place the mushroom in an earthen pot and donate it to the temple', 'Parrots, goats never rear', "Don't use green items", 'Wearing a silver ring in the nose is auspicious for you', 'Keep the red colored pills with you', 'Do not sign any paper without reading it'],
+  'Me-10': ['Consuming alcohol, meat and eggs will be inauspicious for you', "You don't have to plant a money plant or a basil tree in your house"],
+  'Me-11': ['Keep Ganga water in the house in a brass vessel', 'Keep your distance from green objects', 'Do not plant a broadleaf tree in the house', 'Holding the copper coin will be auspicious for you'],
+  'Me-12': ['Apply saffron tilak every day', 'Control your speech', "Don't take a ring from anyone for free", 'Worshiping Lord Ganesha is auspicious for you', 'Putting yellow thread around your neck will be auspicious for you', 'Keeping a black or white colored dog is auspicious for you. Keep in mind that it should not be brown'],
+  'Ju-1': ['Press Mars objects into the ground', "Don't take help from anyone", 'Believe in Your Destiny'],
+  'Ju-2': ['You should help others', "Tie the Guru's items in a yellow cloth and donate them to the temple"],
+  'Ju-3': ['Serve the girls and seek their blessings', 'Do not flatter others at all', 'Apply turmeric and saffron tilak'],
+  'Ju-4': ['Obey elders and do not insult them', 'Offer water to the peepal tree', "Don't drink meat and alcohol", "Don't tell false things about yourself", 'Do not let Rahu and Ketu be inauspicious'],
+  'Ju-5': ['Do not take money from anyone in the name of religion', 'Worship Lord Ganesha', 'Stay away from other women'],
+  'Ju-6': ['It will be auspicious to donate the items of Guru to the temple', 'Keep your father with you or stay with him', 'Worship Girls', 'Pour Sweet Bread to the Dog', 'Do not keep a garland of basil at home, it will have a bad effect', 'Do not build a temple at home', 'Stay away from other women', 'Avoid Stray Sadhus', 'Remedying the moon is auspicious for you'],
+  'Ju-7': ['Do not keep a garland of basil at home, it will have a bad effect', 'Do not build a temple at home', 'Stay away from other women', 'Avoid Stray Sadhus', 'Remedying the moon is auspicious for you', 'Bathing in rainwater is auspicious for you', 'Wear a gold necklace around your neck', 'Planting a peepal tree in the crematorium is auspicious for you', 'Donate yellow or white items', 'Help poor people and donate', 'If the father is sick and in trouble, then definitely help', 'It will be auspicious to donate the items of Jupiter and Venus to the temple', 'Always tell the truth', "You shouldn't drink alcohol", 'You should take a bath in the Ganges'],
+  'Ju-8': ['Wear a gold necklace around your neck', 'Planting a peepal tree in the crematorium is auspicious for you', 'Donate yellow or white items', 'Help poor people and donate'],
+  'Ju-9': ['Always tell the truth', "You shouldn't drink alcohol", 'You should take a bath in the Ganges', 'Pilgrimage is a must', 'Following the religion will be auspicious for you', 'Piercing the nose, wearing silver is auspicious for you'],
+  'Ju-10': ['Never build a temple in the house', "Don't consume alcohol, meat, and eggs; donate almonds to Temple", 'Do not have a relationship with another woman', 'Copper coin will be fine if you float it in the running water'],
+  'Ju-11': ['Keeping a yellow handkerchief in your pocket is auspicious for you', 'Offer water to the peepal tree daily', 'Keep your behavior right', "Don't keep your wife separated"],
+  'Ju-12': ["Don't lie to anyone or cheat on anyone", 'You will benefit from doing good to others', 'A saffron mark on the forehead every day', "Don't do bad to anyone", "Don't insult the saints"],
+  'Ve-1': ['Stay away from housemaids or strangers', 'Keep your behavior right'],
+  'Ve-2': ['It is auspicious for you to work with the advice of your wife', 'Gold business can cause losses for you', 'Throwing things like fennel, honey and sugar etc. in running water is auspicious for you', 'Do not light a ghee lamp in the house', 'It is auspicious for you to feed 2 kg of potatoes yellow with turmeric and feed it to the cow'],
+  'Ve-3': ['It is auspicious for you to use Mars objects', 'Respecting a woman and not insulting her will give you auspicious results', 'Never play music at home'],
+  'Ve-4': ["Putting the Moon's remedy or Jupiter's objects in the well is auspicious for you", 'You should not dig a well in the house', 'Should be the remedy of the Guru', "Don't get drunk", 'You should hide your bad habits and boast about your virtues'],
+  'Ve-5': ['Serving the cow and feeding it is auspicious for you', 'It is auspicious for you to keep water in the house by filling it in a silver vessel', 'Get married according to your parents\' wishes', 'Keep your character right', 'Avoid Love Cycles'],
+  'Ve-6': ['Women should be respected', 'Donate milk and rice at the place of worship', 'Keep good manners and keep a distance from foreign women', 'Put a gold clip in your wife\'s hair', "Don't let your wife walk barefoot on the ground"],
+  'Ve-7': ['You should seek the blessings of your parents every day', 'Serving the red cow is auspicious for you', 'It is auspicious for you to donate bronze utensils to the temple on Friday'],
+  'Ve-8': ['Never take donations', 'Marriage after 25 years is auspicious for you', 'Serving the black cow is auspicious for you', 'Donate Jimikand or Carrot (800 grams or 8 kg) to the temple'],
+  'Ve-9': ['Do not consume white yogurt, eat something mixed with it', 'It is auspicious for you to get married to your son only after the age of 25 years', 'Serving the white coloured cow will give inauspicious results', 'Serving the black cow is auspicious for you', 'Wear silver bangles in red color to your wife, this will benefit you'],
+  'Ve-10': ['Consuming alcohol is bad for you', 'Taking the remedy of Saturn is auspicious for you', 'Stay away from other women', "Don't kill fish"],
+  'Ve-11': ['Donating oil on Saturday is auspicious for you', 'Donate Curd to Temple', 'Doing the remedy of Mercury is auspicious for you', 'Do not give the key to the locker to the woman'],
+  'Ve-12': ['Light a lamp of desi ghee in your home', 'It is auspicious for you to give respect and love to your wife', 'Serving the white cow will bring auspicious results', 'Do not have any relationship with the objects of Rahu'],
+  'Sa-1': ['Donating iron tongs is auspicious for you', 'Donate mustard oil'],
+  'Sa-3': ['Keeping a dog in the house is auspicious for you', 'When building a house, make sure to build a dark closet', 'Nail the doorstep of the house', 'By taking the remedy of Ketu, you will get money'],
+  'Sa-4': ['You will benefit from raising buffaloes or feeding them bread', 'Serve the Workers', 'Stay away from other women', 'Never drink milk at night', 'Never wear black', 'Stay away from the green'],
+  'Sa-5': ["Don't distribute sweets when a child is born; if you share it, make it salty", 'You will benefit from taking the remedy of Mercury', 'You should not build your house until you are 48 years old', 'If your child builds a house on his own, then it is auspicious for you'],
+  'Sa-6': ['Donating shoes to a poor person will benefit you'],
+  'Sa-7': ["Don't partner with anyone", 'Keep honey in a brass pot in the house', 'Serve the black cow', 'Stay away from a foreign woman, otherwise the child will suffer'],
+  'Sa-8': ['While bathing, it will be auspicious for you to take a bath by mixing milk in water', 'Throw 8 kg of urad dal in running water', 'Put dates in the water'],
+  'Sa-9': ['If you are upset after the death of your parents, then put a stone anywhere in the house', 'Create a dark closet in the back of the house', 'The roof of the house should always be kept clean'],
+  'Sa-10': ['Cover your head with a white hat or cloth', 'Chickpea dal soaked in water for 40 days', 'Respect others', 'Do not consume alcohol, meat and eggs'],
+  'Sa-11': ['Stay away from other women', 'Do not make the gate of house in the south direction', 'Remedy the Guru', 'Keep a silver brick at your house', 'Donate oil by seeing your shadow in oil'],
+  'Sa-12': ["Don't lie", 'Stay away from other women', 'Do not make a window or door behind the house', 'You should keep your behavior right', 'Person should make a dark room in his house', 'You should not wear black and blue clothes', 'Bathing with milk is auspicious for you', 'You should wear silver around your neck', 'Donate items related to the Sun', 'Drain the coconut in running water'],
+  'Ra-1': ['You should not wear black and blue clothes', 'Bathing with milk is auspicious for you', 'You should wear silver around your neck', 'Donate items related to the Sun', 'Drain the coconut in running water', 'Keep barley near your head while sleeping at night and let it flow in the water in the morning'],
+  'Ra-2': ['Apply turmeric or saffron tilak', 'Wearing gold will be auspicious for you', 'Maintain a good relationship with your mother in the house', 'Keep any silver item with you, you will get auspicious results'],
+  'Ra-4': ["Don't cook under the stairs of the house", 'Wearing silver is auspicious for you', 'Take a bath in the Ganges', 'Throw 400 grams of coriander in running water', 'Throwing 500 grams of almonds in running water is auspicious for you'],
+  'Ra-5': ['If there is a problem related to the child, then offer almonds in the temple for 43 days', 'Stay away from other women', 'Do not consume alcohol, meat and eggs at all', 'If your Rahu is not good, then you should marry your wife again'],
+  'Ra-6': ['Do not install black glass windows in the house', 'Help your siblings'],
+  'Ra-7': ['At the time of marriage, take silver bricks from the in-laws\' house', 'Never have a dog', 'If you are married at the age of 21, then fill a pot with Ganga water and donate it to the temple'],
+  'Ra-8': ['Never lie', 'Drain 4 coconuts in running water', 'Put 8 copper coins in the furnace'],
+  'Ra-9': ["Don't wear black and blue clothes", 'You should keep your hair braided', 'Apply saffron tilak daily', 'Respect your father and seek his blessings', 'You will benefit from bowing your head daily in the temple', 'Keep your relationship with your in-laws good'],
+  'Ra-10': ["Don't drink milk at night", 'Keeping a bruise on your head is auspicious for you', 'Mars Remedy', 'Keep your head covered', 'Wearing the cap or turban is auspicious for you', 'Get food for 10 blind people with your own hands'],
+  'Ra-11': ["Donate the Guru's belongings", 'Do not eat onions on Thursday', 'On the 8th birthday, throw four dry coconuts in running water'],
+  'Ra-12': ['Keep fennel, sugar or moong dal under the pillow at night', 'It is auspicious for you to sit and eat where the food is prepared', "You don't have to think too much", 'Make sure to build a dark closet in your house'],
+  'Ke-1': ['Feed jaggery to the monkey', 'Remedy the moon', 'Keep a red handkerchief in your pocket', 'Donate black and white blankets to temple'],
+  'Ke-2': ['Apply a saffron tilak on the forehead'],
+  'Ke-3': ['Throw rice, jaggery and milk in running water', 'Wearing gold in the ears is auspicious for you', 'Do not keep the sister-in-law or brother-in-law with you in the house', "Don't use the green"],
+  'Ke-4': ['Wear silver for peace of mind', 'Throw yellow lemons in running water', 'Donate Surya items and seek blessings'],
+  'Ke-5': ['Donate Moon and Mars items', 'Shraddha of ancestors should be done properly', 'Apply saffron tilak', 'Should be the remedy of Guru'],
+  'Ke-6': ["Don't drink milk alone, drink it with saffron", 'Donate black, white blankets to the temple', 'Remedy the Guru', 'Wear the gold ring in the left hand', 'Raising a dog is auspicious for you'],
+  'Ke-7': ["Don't make false promises to anyone", "Don't be proud of yourself", 'Drain 4 lemons in running water for 4 days', 'Never speak bitterly'],
+  'Ke-8': ['If you keep your behavior right, your wife\'s health will be good', 'Worship Lord Ganesha', 'Feed Bread to the Dog', 'Donate blankets to temples'],
+  'Ke-10': ["Don't do evil to your brothers", 'Fill honey in a pot-shaped vessel and keep it in the house'],
+  'Ke-11': ['Placing radish near your wife\'s head at night and giving it to a religious place in the morning will have a good effect on your child', 'Add saffron to milk and drink it', 'Raising a black dog is auspicious for you', "Donate Jupiter's items"],
+  'Ke-12': ['Raising a dog is auspicious for you', 'If your child is upset, then take the remedy of Rahu', 'Keep your behavior right', 'You should worry about your child', 'If your pet dog dies, it is necessary to bring another dog within 43 days'],
+};
+
 /**
- * Get description for a planet in a house (Lal Kitaab).
- * planetShort: Su, Mo, Ma, Me, Ju, Ve, Sa, Ra, Ke
+ * Get house description (significations, title, etc.) for the given language.
  */
-export function getPlanetInHouseDescription(
-  planetShort: string,
-  houseNumber: number
-): string | undefined {
-  const key = getPlanetInHouseKey(planetShort, houseNumber);
-  return PLANET_IN_HOUSE[key];
+export function getHouseDescription(
+  houseNumber: number,
+  lang: DescriptionLanguage = 'en'
+): HouseDescription | undefined {
+  const source = lang === 'hi' ? LAL_KITAAB_HOUSE_DESCRIPTIONS_HI : LAL_KITAAB_HOUSE_DESCRIPTIONS;
+  return source[houseNumber];
 }
 
 /**
- * Get full planet name for display
+ * Get description for a planet in a house (Lal Kitaab).
+ * planetShort: Su, Mo, Ma, Me, Ju, Ve, Sa, Ra, Ke
+ * When chartType is 'birth', uses birth-chart data (Hindi from docx; English translated from that Hindi only).
+ * When chartType is 'varshphal' or omitted, uses Varshphal (year horoscope) data.
  */
-export function getPlanetDisplayName(planetShort: string): string {
-  return PLANET_NAMES[planetShort] || planetShort;
+export function getPlanetInHouseDescription(
+  planetShort: string,
+  houseNumber: number,
+  lang: DescriptionLanguage = 'en',
+  chartType: LalKitaabChartType = 'varshphal'
+): string | undefined {
+  const key = getPlanetInHouseKey(planetShort, houseNumber);
+  if (chartType === 'birth') {
+    if (lang === 'hi') {
+      const birthHi = BIRTH_CHART_PLANET_IN_HOUSE_HI[key];
+      if (birthHi) return birthHi;
+      return PLANET_IN_HOUSE_HI[key];
+    }
+    return BIRTH_CHART_PLANET_IN_HOUSE[key];
+  }
+  if (lang === 'hi' && PLANET_IN_HOUSE_HI[key]) return PLANET_IN_HOUSE_HI[key];
+  return PLANET_IN_HOUSE[key];
+}
+
+/** Planet-in-house remedies. When chartType is 'birth', uses birth-chart remedies (Hindi from docx; English translated from that Hindi). */
+export function getPlanetInHouseRemedies(
+  planetShort: string,
+  houseNumber: number,
+  lang: DescriptionLanguage = 'en',
+  chartType: LalKitaabChartType = 'varshphal'
+): string[] {
+  const key = getPlanetInHouseKey(planetShort, houseNumber);
+  if (chartType === 'birth' && lang === 'hi') {
+    const birthRem = BIRTH_CHART_PLANET_IN_HOUSE_REMEDIES_HI[key];
+    if (birthRem?.length) return birthRem;
+    return PLANET_IN_HOUSE_REMEDIES_HI[key] ?? [];
+  }
+  if (chartType === 'birth' && lang === 'en') {
+    return BIRTH_CHART_PLANET_IN_HOUSE_REMEDIES[key] ?? [];
+  }
+  if (lang === 'hi' && PLANET_IN_HOUSE_REMEDIES_HI[key]?.length) return PLANET_IN_HOUSE_REMEDIES_HI[key];
+  return PLANET_IN_HOUSE_REMEDIES[key] ?? [];
+}
+
+/**
+ * Get full planet name for display in the given language.
+ */
+export function getPlanetDisplayName(planetShort: string, lang: DescriptionLanguage = 'en'): string {
+  const source = lang === 'hi' ? PLANET_NAMES_HI : PLANET_NAMES;
+  return source[planetShort] || planetShort;
 }

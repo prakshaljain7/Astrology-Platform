@@ -13,11 +13,17 @@ import {
   HouseData,
 } from '@/lib/lal-kitaab';
 import {
-  LAL_KITAAB_HOUSE_DESCRIPTIONS,
+  type DescriptionLanguage,
+  getHouseDescription,
   getPlanetInHouseDescription,
+  getPlanetInHouseRemedies,
   getPlanetDisplayName,
 } from '@/lib/lal-kitaab-descriptions';
-import { NorthIndianChartSvg, SouthIndianChartSvg, ChartPlanet } from '@/components/charts';
+import {
+  NorthIndianChartSvg,
+  SouthIndianChartSvg,
+  ChartPlanet,
+} from '@/components/charts';
 
 // Convert HouseData to planet format expected by chart components
 function housesToChartPlanets(houses: HouseData[]): ChartPlanet[] {
@@ -41,6 +47,12 @@ export default function LalKitaabPage() {
 
   // Chart style state
   const [chartStyle, setChartStyle] = useState<'north' | 'south'>('north');
+  // Chart type: birth chart or varshphal (yearly) — descriptions follow the selected chart
+  const [chartType, setChartType] = useState<'birth' | 'varshphal'>(
+    'varshphal',
+  );
+  // Description section language (English / Hindi)
+  const [descLang, setDescLang] = useState<DescriptionLanguage>('en');
 
   // Get birth year from form data
   const birthYear = useMemo(() => {
@@ -51,7 +63,9 @@ export default function LalKitaabPage() {
   }, [formData]);
 
   // Year selection state - initialize with current year
-  const [selectedYear, setSelectedYear] = useState<number>(() => new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState<number>(() =>
+    new Date().getFullYear(),
+  );
 
   // Generate year menu
   const yearMenu = useMemo(() => generateYearMenu(birthYear, 12), [birthYear]);
@@ -59,7 +73,7 @@ export default function LalKitaabPage() {
   // Calculate year index
   const yearIndex = useMemo(
     () => getYearIndex(birthYear, selectedYear),
-    [birthYear, selectedYear]
+    [birthYear, selectedYear],
   );
 
   // Convert kundali planets to house data
@@ -67,17 +81,17 @@ export default function LalKitaabPage() {
     if (!kundaliData?.planets || !kundaliData?.ascendant) {
       return null;
     }
-    
+
     // Convert API planets to the format expected by convertPlanetsToHouseData
-    const planetsForConversion = kundaliData.planets.map(p => ({
+    const planetsForConversion = kundaliData.planets.map((p) => ({
       name: p.planet,
       house: p.house_no,
       sign: parseInt(p.sign) || 1,
     }));
-    
+
     // Get ascendant sign number (convert from string if needed)
     const ascSign = parseInt(kundaliData.ascendant.sign) || 1;
-    
+
     return convertPlanetsToHouseData(planetsForConversion, ascSign);
   }, [kundaliData]);
 
@@ -117,11 +131,11 @@ export default function LalKitaabPage() {
   // Render no data state
   if (!hasData || !kundaliData) {
     return (
-      <div className="p-8">
+      <div className='p-8'>
         {/* Header */}
-        <div className="mb-8">
+        <div className='mb-8'>
           <h1
-            className="text-3xl font-semibold mb-2 shimmer-gold"
+            className='text-3xl font-semibold mb-2 shimmer-gold'
             style={{
               color: colors.text.primary,
               fontFamily: cssVars.fontPlayfair,
@@ -135,31 +149,31 @@ export default function LalKitaabPage() {
         </div>
 
         {/* No Data Card */}
-        <div className="glass-card rounded-2xl p-8 text-center">
+        <div className='glass-card rounded-2xl p-8 text-center'>
           <div
-            className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center"
+            className='w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center'
             style={{
               background: `linear-gradient(to bottom right, ${themeColors.brand.accentBg50}, ${themeColors.decorative.lavenderBg})`,
               boxShadow: `0 10px 30px ${themeColors.brand.accentBg}`,
             }}
           >
             <svg
-              className="w-10 h-10"
+              className='w-10 h-10'
               style={{ color: themeColors.brand.accent }}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
             >
               <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                strokeLinecap='round'
+                strokeLinejoin='round'
                 strokeWidth={1.5}
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'
               />
             </svg>
           </div>
           <h3
-            className="text-xl mb-3"
+            className='text-xl mb-3'
             style={{
               color: themeColors.text.primary,
               fontFamily: cssVars.fontPlayfair,
@@ -168,7 +182,7 @@ export default function LalKitaabPage() {
             Calculate Kundali First
           </h3>
           <p
-            className="mb-6 max-w-md mx-auto"
+            className='mb-6 max-w-md mx-auto'
             style={{ color: themeColors.text.secondary }}
           >
             To view Lal Kitaab yearly charts, please calculate your Kundali
@@ -176,8 +190,8 @@ export default function LalKitaabPage() {
             special transformation matrix.
           </p>
           <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all"
+            href='/dashboard'
+            className='inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all'
             style={{
               background: `linear-gradient(to right, ${themeColors.brand.accent}, ${themeColors.brand.accentLight})`,
               color: '#3a2d0b',
@@ -185,16 +199,16 @@ export default function LalKitaabPage() {
             }}
           >
             <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+              className='w-5 h-5'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
             >
               <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                strokeLinecap='round'
+                strokeLinejoin='round'
                 strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                d='M10 19l-7-7m0 0l7-7m-7 7h18'
               />
             </svg>
             Go to Kundali Calculator
@@ -205,11 +219,11 @@ export default function LalKitaabPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className='p-8'>
       {/* Header */}
-      <div className="mb-8">
+      <div className='mb-8'>
         <h1
-          className="text-3xl font-semibold mb-2 shimmer-gold"
+          className='text-3xl font-semibold mb-2 shimmer-gold'
           style={{
             color: colors.text.primary,
             fontFamily: cssVars.fontPlayfair,
@@ -224,62 +238,117 @@ export default function LalKitaabPage() {
 
       {/* Controls */}
       <div
-        className="glass-card rounded-xl p-4 mb-6"
+        className='glass-card rounded-xl p-4 mb-6'
         style={{ borderLeft: `4px solid ${themeColors.brand.accent}` }}
       >
-        <div className="flex flex-wrap gap-4 items-center justify-between">
+        <div className='flex flex-wrap gap-4 items-center justify-between'>
           {/* Birth Details */}
-          <div className="flex flex-wrap gap-4 items-center">
-            <div className="flex items-center gap-2">
+          <div className='flex flex-wrap gap-4 items-center'>
+            <div className='flex items-center gap-2'>
               <span style={{ color: themeColors.text.secondary }}>DOB:</span>
-              <span style={{ color: themeColors.text.primary, fontWeight: 500 }}>
+              <span
+                style={{ color: themeColors.text.primary, fontWeight: 500 }}
+              >
                 {formData?.dob}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <span style={{ color: themeColors.text.secondary }}>Birth Year:</span>
-              <span style={{ color: themeColors.text.primary, fontWeight: 500 }}>
+            <div className='flex items-center gap-2'>
+              <span style={{ color: themeColors.text.secondary }}>
+                Birth Year:
+              </span>
+              <span
+                style={{ color: themeColors.text.primary, fontWeight: 500 }}
+              >
                 {birthYear}
               </span>
             </div>
           </div>
 
-          {/* Chart Style Toggle */}
-          <div className="flex items-center gap-2">
+          {/* Chart Type: Birth Chart vs Varshphal — descriptions follow this selection */}
+          <div className='flex items-center gap-2'>
             <span
-              className="text-sm font-medium"
+              className='text-sm font-medium'
+              style={{ color: themeColors.text.secondary }}
+            >
+              Chart:
+            </span>
+            <div
+              className='flex rounded-lg overflow-hidden'
+              style={{ border: `1px solid ${themeColors.border.gray}` }}
+            >
+              <button
+                onClick={() => setChartType('birth')}
+                className='px-3 py-1.5 text-sm font-medium transition-all'
+                style={{
+                  backgroundColor:
+                    chartType === 'birth'
+                      ? themeColors.brand.accent
+                      : 'transparent',
+                  color:
+                    chartType === 'birth' ? '#fff' : themeColors.text.secondary,
+                }}
+              >
+                Birth Chart
+              </button>
+              <button
+                onClick={() => setChartType('varshphal')}
+                className='px-3 py-1.5 text-sm font-medium transition-all'
+                style={{
+                  backgroundColor:
+                    chartType === 'varshphal'
+                      ? themeColors.brand.accent
+                      : 'transparent',
+                  color:
+                    chartType === 'varshphal'
+                      ? '#fff'
+                      : themeColors.text.secondary,
+                }}
+              >
+                Varshphal
+              </button>
+            </div>
+          </div>
+
+          {/* Chart Style Toggle */}
+          <div className='flex items-center gap-2'>
+            <span
+              className='text-sm font-medium'
               style={{ color: themeColors.text.secondary }}
             >
               Style:
             </span>
             <div
-              className="flex rounded-lg overflow-hidden"
+              className='flex rounded-lg overflow-hidden'
               style={{ border: `1px solid ${themeColors.border.gray}` }}
             >
               <button
                 onClick={() => setChartStyle('north')}
-                className="px-3 py-1.5 text-sm font-medium transition-all"
+                className='px-3 py-1.5 text-sm font-medium transition-all'
                 style={{
                   backgroundColor:
                     chartStyle === 'north'
                       ? themeColors.brand.accent
                       : 'transparent',
                   color:
-                    chartStyle === 'north' ? '#fff' : themeColors.text.secondary,
+                    chartStyle === 'north'
+                      ? '#fff'
+                      : themeColors.text.secondary,
                 }}
               >
                 North
               </button>
               <button
                 onClick={() => setChartStyle('south')}
-                className="px-3 py-1.5 text-sm font-medium transition-all"
+                className='px-3 py-1.5 text-sm font-medium transition-all'
                 style={{
                   backgroundColor:
                     chartStyle === 'south'
                       ? themeColors.brand.accent
                       : 'transparent',
                   color:
-                    chartStyle === 'south' ? '#fff' : themeColors.text.secondary,
+                    chartStyle === 'south'
+                      ? '#fff'
+                      : themeColors.text.secondary,
                 }}
               >
                 South
@@ -289,168 +358,164 @@ export default function LalKitaabPage() {
         </div>
       </div>
 
-      {/* Year Selection */}
-      <div className="glass-card rounded-xl p-4 mb-6">
-        <div className="flex flex-wrap gap-4 items-center justify-between">
-          {/* Year Navigation */}
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handlePreviousYear}
-              disabled={selectedYear <= birthYear}
-              className="p-2 rounded-lg transition-all"
-              style={{
-                backgroundColor: themeColors.background.hover,
-                color: themeColors.text.primary,
-                opacity: selectedYear <= birthYear ? 0.5 : 1,
-              }}
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
+      {/* Year Selection — only for Varshphal */}
+      {chartType === 'varshphal' && (
+        <div className='glass-card rounded-xl p-4 mb-6'>
+          <div className='flex flex-wrap gap-4 items-center justify-between'>
+            {/* Year Navigation */}
+            <div className='flex items-center gap-4'>
+              <button
+                onClick={handlePreviousYear}
+                disabled={selectedYear <= birthYear}
+                className='p-2 rounded-lg transition-all'
+                style={{
+                  backgroundColor: themeColors.background.hover,
+                  color: themeColors.text.primary,
+                  opacity: selectedYear <= birthYear ? 0.5 : 1,
+                }}
+              >
+                <svg
+                  className='w-5 h-5'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  stroke='currentColor'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M15 19l-7-7 7-7'
+                  />
+                </svg>
+              </button>
 
-            <div className="text-center">
-              <div
-                className="text-2xl font-bold"
-                style={{ color: themeColors.brand.accent }}
-              >
-                {selectedYear}
+              <div className='text-center'>
+                <div
+                  className='text-2xl font-bold'
+                  style={{ color: themeColors.brand.accent }}
+                >
+                  {selectedYear}
+                </div>
+                <div
+                  className='text-sm'
+                  style={{ color: themeColors.text.secondary }}
+                >
+                  Age: {selectedYear - birthYear} years
+                </div>
               </div>
-              <div
-                className="text-sm"
-                style={{ color: themeColors.text.secondary }}
+
+              <button
+                onClick={handleNextYear}
+                disabled={selectedYear >= birthYear + 120}
+                className='p-2 rounded-lg transition-all'
+                style={{
+                  backgroundColor: themeColors.background.hover,
+                  color: themeColors.text.primary,
+                  opacity: selectedYear >= birthYear + 120 ? 0.5 : 1,
+                }}
               >
-                Age: {selectedYear - birthYear} years
-              </div>
+                <svg
+                  className='w-5 h-5'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  stroke='currentColor'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M9 5l7 7-7 7'
+                  />
+                </svg>
+              </button>
             </div>
 
-            <button
-              onClick={handleNextYear}
-              disabled={selectedYear >= birthYear + 120}
-              className="p-2 rounded-lg transition-all"
-              style={{
-                backgroundColor: themeColors.background.hover,
-                color: themeColors.text.primary,
-                opacity: selectedYear >= birthYear + 120 ? 0.5 : 1,
-              }}
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Year Dropdown */}
-          <div className="flex items-center gap-2">
-            <label
-              className="text-sm font-medium"
-              style={{ color: themeColors.text.secondary }}
-            >
-              Jump to:
-            </label>
-            <select
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(Number(e.target.value))}
-              className="px-3 py-2 rounded-lg border"
-              style={{
-                backgroundColor: themeColors.background.input,
-                borderColor: themeColors.border.gray,
-                color: themeColors.text.primary,
-              }}
-            >
-              {yearMenu.map((decade) => (
-                <optgroup key={decade.decade} label={`Decade ${decade.decade}`}>
-                  {decade.years.map((year) => (
-                    <option key={year} value={year}>
-                      {year} (Age {year - birthYear})
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
+            {/* Year Dropdown */}
+            <div className='flex items-center gap-2'>
+              <label
+                className='text-sm font-medium'
+                style={{ color: themeColors.text.secondary }}
+              >
+                Jump to:
+              </label>
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(Number(e.target.value))}
+                className='px-3 py-2 rounded-lg border'
+                style={{
+                  backgroundColor: themeColors.background.input,
+                  borderColor: themeColors.border.gray,
+                  color: themeColors.text.primary,
+                }}
+              >
+                {yearMenu.map((decade) => (
+                  <optgroup
+                    key={decade.decade}
+                    label={`Decade ${decade.decade}`}
+                  >
+                    {decade.years.map((year) => (
+                      <option key={year} value={year}>
+                        {year} (Age {year - birthYear})
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Charts Side by Side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Birth Chart (Lagna) */}
-        <div className="glass-card rounded-xl p-6">
-          <h3
-            className="text-xl font-semibold mb-4 text-center"
-            style={{
-              color: themeColors.text.primary,
-              fontFamily: cssVars.fontPlayfair,
-            }}
-          >
-            Birth Chart (Lagna Kundali)
-          </h3>
-          <div className="flex justify-center">
+      {/* Single chart — Birth Chart or Varshphal per selection */}
+      <div className='glass-card rounded-xl p-6 mb-6'>
+        <h3
+          className='text-xl font-semibold mb-4 text-center'
+          style={{
+            color: themeColors.text.primary,
+            fontFamily: cssVars.fontPlayfair,
+          }}
+        >
+          {chartType === 'birth'
+            ? 'Birth Chart (Lagna Kundali)'
+            : `Lal Kitaab Varshphal (${selectedYear})`}
+        </h3>
+        <div className='flex justify-center w-full'>
+          <div className='flex justify-center items-center h-120 min-w-120'>
             {chartStyle === 'north' ? (
               <NorthIndianChartSvg
-                planets={natalChartPlanets}
+                planets={
+                  chartType === 'birth' ? natalChartPlanets : yearlyChartPlanets
+                }
                 ascendantSign={ascendantSign}
-                size={350}
+                size={400}
                 compact={false}
               />
             ) : (
               <SouthIndianChartSvg
-                planets={natalChartPlanets}
+                planets={
+                  chartType === 'birth' ? natalChartPlanets : yearlyChartPlanets
+                }
                 ascendantSign={ascendantSign}
-                size={350}
+                size={400}
                 compact={false}
               />
             )}
-          </div>
-          <div
-            className="mt-4 text-center text-sm"
-            style={{ color: themeColors.text.secondary }}
-          >
-            Original planetary positions at birth
           </div>
         </div>
-
-        {/* Lal Kitaab Yearly Chart */}
-        <div className="glass-card rounded-xl p-6">
-          <h3
-            className="text-xl font-semibold mb-4 text-center"
-            style={{
-              color: themeColors.text.primary,
-              fontFamily: cssVars.fontPlayfair,
-            }}
-          >
-            Lal Kitaab Varshphal ({selectedYear})
-          </h3>
-          <div className="flex justify-center">
-            {chartStyle === 'north' ? (
-              <NorthIndianChartSvg
-                planets={yearlyChartPlanets}
-                ascendantSign={ascendantSign}
-                size={350}
-                compact={false}
-              />
-            ) : (
-              <SouthIndianChartSvg
-                planets={yearlyChartPlanets}
-                ascendantSign={ascendantSign}
-                size={350}
-                compact={false}
-              />
-            )}
-          </div>
-          <div
-            className="mt-4 text-center text-sm"
-            style={{ color: themeColors.text.secondary }}
-          >
-            Transformed positions for year {selectedYear} (Matrix Index: {yearIndex})
-          </div>
+        <div
+          className='mt-4 text-center text-sm'
+          style={{ color: themeColors.text.secondary }}
+        >
+          {chartType === 'birth'
+            ? 'Original planetary positions at birth. Descriptions below are for this chart.'
+            : `Transformed positions for year ${selectedYear} (Matrix Index: ${yearIndex}). Descriptions below are for this year.`}
         </div>
       </div>
 
       {/* House Comparison Table */}
-      <div className="glass-card rounded-xl p-6 mt-6">
+      <div className='glass-card rounded-xl p-6 mt-6'>
         <h3
-          className="text-lg font-semibold mb-4"
+          className='text-lg font-semibold mb-4'
           style={{
             color: themeColors.text.primary,
             fontFamily: cssVars.fontPlayfair,
@@ -458,12 +523,12 @@ export default function LalKitaabPage() {
         >
           House-wise Planet Comparison
         </h3>
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className='overflow-x-auto'>
+          <table className='w-full'>
             <thead>
               <tr>
                 <th
-                  className="px-4 py-3 text-left text-sm font-semibold"
+                  className='px-4 py-3 text-left text-sm font-semibold'
                   style={{
                     backgroundColor: themeColors.brand.primary,
                     color: '#fff',
@@ -472,7 +537,7 @@ export default function LalKitaabPage() {
                   House
                 </th>
                 <th
-                  className="px-4 py-3 text-left text-sm font-semibold"
+                  className='px-4 py-3 text-left text-sm font-semibold'
                   style={{
                     backgroundColor: themeColors.brand.primary,
                     color: '#fff',
@@ -481,7 +546,7 @@ export default function LalKitaabPage() {
                   Birth Chart Planets
                 </th>
                 <th
-                  className="px-4 py-3 text-left text-sm font-semibold"
+                  className='px-4 py-3 text-left text-sm font-semibold'
                   style={{
                     backgroundColor: themeColors.brand.primary,
                     color: '#fff',
@@ -502,13 +567,13 @@ export default function LalKitaabPage() {
                     }}
                   >
                     <td
-                      className="px-4 py-3 font-medium"
+                      className='px-4 py-3 font-medium'
                       style={{ color: themeColors.text.primary }}
                     >
                       House {natalHouse.houseNumber}
                     </td>
                     <td
-                      className="px-4 py-3"
+                      className='px-4 py-3'
                       style={{ color: themeColors.text.primary }}
                     >
                       {natalHouse.planets.length > 0
@@ -516,7 +581,7 @@ export default function LalKitaabPage() {
                         : '-'}
                     </td>
                     <td
-                      className="px-4 py-3"
+                      className='px-4 py-3'
                       style={{ color: themeColors.text.primary }}
                     >
                       {yearlyHouse && yearlyHouse.planets.length > 0
@@ -531,94 +596,139 @@ export default function LalKitaabPage() {
         </div>
       </div>
 
-      {/* Lal Kitaab House & Planet Descriptions */}
-      {yearlyHouses && (
-        <div className="glass-card rounded-xl p-6 mt-6">
-          <h3
-            className="text-lg font-semibold mb-4"
-            style={{
-              color: themeColors.text.primary,
-              fontFamily: cssVars.fontPlayfair,
-            }}
-          >
-            Lal Kitaab Descriptions — Houses & Planets ({selectedYear})
-          </h3>
-          <p
-            className="text-sm mb-6"
-            style={{ color: themeColors.text.secondary }}
-          >
-            Below are the significations of each house and the meaning of planets placed in them for your Lal Kitaab Varshphal chart of {selectedYear}.
+      {/* Lal Kitaab House & Planet Descriptions — follows selected chart; language switch English/Hindi */}
+      {(chartType === 'birth' ? natalHouses : yearlyHouses) && (
+        <div className='glass-card rounded-xl p-6 mt-6'>
+          <div className='flex flex-wrap gap-4 items-center justify-between mb-4'>
+            <h3
+              className='text-lg font-semibold'
+              style={{
+                color: themeColors.text.primary,
+                fontFamily: cssVars.fontPlayfair,
+              }}
+            >
+              {descLang === 'hi' ? 'लाल किताब विवरण — भाव एवं ग्रह' : 'Lal Kitaab Descriptions — Houses & Planets'}
+              {chartType === 'varshphal'
+                ? ` (${selectedYear})`
+                : descLang === 'hi' ? ' (जन्म कुंडली)' : ' (Birth Chart)'}
+            </h3>
+            <div className='flex items-center gap-2'>
+              <span className='text-sm font-medium' style={{ color: themeColors.text.secondary }}>
+                {descLang === 'hi' ? 'भाषा:' : 'Language:'}
+              </span>
+              <div
+                className='flex rounded-lg overflow-hidden'
+                style={{ border: `1px solid ${themeColors.border.gray}` }}
+              >
+                <button
+                  onClick={() => setDescLang('en')}
+                  className='px-3 py-1.5 text-sm font-medium transition-all'
+                  style={{
+                    backgroundColor: descLang === 'en' ? themeColors.brand.accent : 'transparent',
+                    color: descLang === 'en' ? '#fff' : themeColors.text.secondary,
+                  }}
+                >
+                  English
+                </button>
+                <button
+                  onClick={() => setDescLang('hi')}
+                  className='px-3 py-1.5 text-sm font-medium transition-all'
+                  style={{
+                    backgroundColor: descLang === 'hi' ? themeColors.brand.accent : 'transparent',
+                    color: descLang === 'hi' ? '#fff' : themeColors.text.secondary,
+                  }}
+                >
+                  हिंदी
+                </button>
+              </div>
+            </div>
+          </div>
+          <p className='text-sm mb-6' style={{ color: themeColors.text.secondary }}>
+            {descLang === 'hi'
+              ? (chartType === 'birth'
+                  ? 'प्रत्येक भाव के अर्थ और उनमें स्थित ग्रहों का फल आपकी जन्म कुंडली के अनुसार।'
+                  : `प्रत्येक भाव के अर्थ और उनमें स्थित ग्रहों का फल आपकी लाल किताब वर्ष कुंडली ${selectedYear} के अनुसार।`)
+              : chartType === 'birth'
+                ? 'Significations of each house and meaning of planets placed in them for your birth chart.'
+                : `Significations of each house and meaning of planets placed in them for your Lal Kitaab Varshphal chart of ${selectedYear}.`}
           </p>
-          <div className="space-y-6">
-            {yearlyHouses.map((house) => {
-              const houseDesc = LAL_KITAAB_HOUSE_DESCRIPTIONS[house.houseNumber];
+          <div className='space-y-6'>
+            {(chartType === 'birth' ? natalHouses! : yearlyHouses!).map((house) => {
+              const houseDesc = getHouseDescription(house.houseNumber, descLang);
               if (!houseDesc) return null;
+              const houseLabel = descLang === 'hi' ? 'भाव' : 'House';
+              const bodyPartsLabel = descLang === 'hi' ? 'शरीर के अंग:' : 'Body parts:';
+              const rulerLabel = descLang === 'hi' ? 'स्वामी:' : 'Ruler:';
+              const significatorLabel = descLang === 'hi' ? 'संकेतक:' : 'Significator:';
+              const planetsLabel = descLang === 'hi' ? 'इस भाव में ग्रह:' : 'Planets in this house:';
+              const noPlanetsLabel = descLang === 'hi' ? 'इस भाव में कोई ग्रह नहीं।' : 'No planets in this house.';
               return (
                 <div
                   key={house.houseNumber}
-                  className="rounded-lg p-4"
+                  className='rounded-lg p-4'
                   style={{
                     borderLeft: `4px solid ${themeColors.brand.accent}`,
                     backgroundColor: themeColors.background.hover,
                   }}
                 >
                   <h4
-                    className="font-semibold mb-2"
+                    className='font-semibold mb-2'
                     style={{
                       color: themeColors.text.primary,
                       fontFamily: cssVars.fontPlayfair,
                     }}
                   >
-                    House {house.houseNumber}: {houseDesc.title}
+                    {houseLabel} {house.houseNumber}: {houseDesc.title}
                   </h4>
-                  <p
-                    className="text-sm mb-2"
-                    style={{ color: themeColors.text.secondary }}
-                  >
+                  <p className='text-sm mb-2' style={{ color: themeColors.text.secondary }}>
                     {houseDesc.significations}
                   </p>
                   {houseDesc.bodyParts && (
-                    <p
-                      className="text-xs mb-3"
-                      style={{ color: themeColors.text.muted }}
-                    >
-                      Body parts: {houseDesc.bodyParts}. Ruler: {houseDesc.ruler}, Significator: {houseDesc.significator}.
+                    <p className='text-xs mb-3' style={{ color: themeColors.text.muted }}>
+                      {bodyPartsLabel} {houseDesc.bodyParts}. {rulerLabel} {houseDesc.ruler}, {significatorLabel} {houseDesc.significator}.
                     </p>
                   )}
                   {house.planets.length > 0 ? (
-                    <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${themeColors.border.light}` }}>
-                      <p
-                        className="text-xs font-medium mb-2"
-                        style={{ color: themeColors.text.primary }}
-                      >
-                        Planets in this house ({selectedYear}):
+                    <div
+                      className='mt-3 pt-3'
+                      style={{ borderTop: `1px solid ${themeColors.border.light}` }}
+                    >
+                      <p className='text-xs font-medium mb-2' style={{ color: themeColors.text.primary }}>
+                        {planetsLabel}
                       </p>
-                      <ul className="list-none space-y-2">
+                      <ul className='list-none space-y-4'>
                         {house.planets.map((planetShort) => {
-                          const desc = getPlanetInHouseDescription(planetShort, house.houseNumber);
-                          const name = getPlanetDisplayName(planetShort);
+                          const desc = getPlanetInHouseDescription(planetShort, house.houseNumber, descLang, chartType);
+                          const remedies = getPlanetInHouseRemedies(planetShort, house.houseNumber, descLang, chartType);
+                          const name = getPlanetDisplayName(planetShort, descLang);
                           return (
                             <li
                               key={planetShort}
-                              className="text-sm pl-3"
+                              className='text-sm pl-3'
                               style={{
                                 color: themeColors.text.secondary,
                                 borderLeft: `2px solid ${themeColors.brand.accent}`,
                               }}
                             >
                               <strong style={{ color: themeColors.text.primary }}>{name}:</strong>{' '}
-                              {desc ?? `${name} in house ${house.houseNumber} influences the affairs of this house.`}
+                              {desc ?? (descLang === 'hi' ? `${name} इस भाव में इस भाव के कारकों को प्रभावित करता है।` : `${name} in house ${house.houseNumber} influences the affairs of this house.`)}
+                              {remedies.length > 0 && (
+                                <ul className='mt-2 ml-4 list-disc space-y-1'>
+                                  {remedies.map((remedy, idx) => (
+                                    <li key={idx} className='text-xs' style={{ color: themeColors.text.muted }}>
+                                      {remedy}
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
                             </li>
                           );
                         })}
                       </ul>
                     </div>
                   ) : (
-                    <p
-                      className="text-xs mt-2 italic"
-                      style={{ color: themeColors.text.muted }}
-                    >
-                      No planets in this house for {selectedYear}.
+                    <p className='text-xs mt-2 italic' style={{ color: themeColors.text.muted }}>
+                      {noPlanetsLabel}
                     </p>
                   )}
                 </div>
@@ -629,9 +739,9 @@ export default function LalKitaabPage() {
       )}
 
       {/* Information Section */}
-      <div className="glass-card rounded-xl p-6 mt-6">
+      <div className='glass-card rounded-xl p-6 mt-6'>
         <h3
-          className="text-lg font-semibold mb-4"
+          className='text-lg font-semibold mb-4'
           style={{
             color: themeColors.text.primary,
             fontFamily: cssVars.fontPlayfair,
@@ -640,25 +750,35 @@ export default function LalKitaabPage() {
           About Lal Kitaab
         </h3>
         <div
-          className="text-sm space-y-3"
+          className='text-sm space-y-3'
           style={{ color: themeColors.text.secondary }}
         >
           <p>
-            <strong style={{ color: themeColors.text.primary }}>Lal Kitaab</strong> (Red Book) 
-            is a set of five Urdu language books on astrology and palmistry, written in the 
-            19th century in the Punjab region. It has its own unique system of predicting events 
-            and prescribing remedies.
+            <strong style={{ color: themeColors.text.primary }}>
+              Lal Kitaab
+            </strong>{' '}
+            (Red Book) is a set of five Urdu language books on astrology and
+            palmistry, written in the 19th century in the Punjab region. It has
+            its own unique system of predicting events and prescribing remedies.
           </p>
           <p>
-            <strong style={{ color: themeColors.text.primary }}>Varshphal Chart:</strong> The 
-            yearly chart is calculated using a special 121x12 transformation matrix. Each year 
-            from birth has a unique mapping that rearranges the planets from their natal positions 
-            to their yearly positions.
+            <strong style={{ color: themeColors.text.primary }}>
+              Varshphal Chart:
+            </strong>{' '}
+            The yearly chart is calculated using a special 121x12 transformation
+            matrix. Each year from birth has a unique mapping that rearranges
+            the planets from their natal positions to their yearly positions.
           </p>
           <p>
-            <strong style={{ color: themeColors.text.primary }}>Current Selection:</strong> Year 
-            {' '}{selectedYear} corresponds to matrix index {yearIndex}, which means this is 
-            {selectedYear === birthYear ? ' the birth year' : ` ${selectedYear - birthYear} years after birth`}.
+            <strong style={{ color: themeColors.text.primary }}>
+              Current Selection:
+            </strong>{' '}
+            Year {selectedYear} corresponds to matrix index {yearIndex}, which
+            means this is
+            {selectedYear === birthYear
+              ? ' the birth year'
+              : ` ${selectedYear - birthYear} years after birth`}
+            .
           </p>
         </div>
       </div>
