@@ -19,6 +19,7 @@ import {
   getPlanetInHouseRemedies,
   getPlanetDisplayName,
 } from '@/lib/lal-kitaab-descriptions';
+import { downloadLalKitaabPdf } from '@/lib/lal-kitaab-pdf';
 import {
   NorthIndianChartSvg,
   SouthIndianChartSvg,
@@ -53,6 +54,7 @@ export default function LalKitaabPage() {
   );
   // Description section language (English / Hindi)
   const [descLang, setDescLang] = useState<DescriptionLanguage>('en');
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
 
   // Get birth year from form data
   const birthYear = useMemo(() => {
@@ -125,6 +127,23 @@ export default function LalKitaabPage() {
   const handleNextYear = () => {
     if (selectedYear < birthYear + 120) {
       setSelectedYear(selectedYear + 1);
+    }
+  };
+
+  const handleExportPdf = () => {
+    const houses = chartType === 'birth' ? natalHouses : yearlyHouses;
+    if (!houses) return;
+    setIsExportingPdf(true);
+    try {
+      downloadLalKitaabPdf({
+        chartType,
+        selectedYear,
+        birthYear,
+        houses,
+        descLang,
+      });
+    } finally {
+      setIsExportingPdf(false);
     }
   };
 
@@ -468,17 +487,46 @@ export default function LalKitaabPage() {
 
       {/* Single chart — Birth Chart or Varshphal per selection */}
       <div className='glass-card rounded-xl p-6 mb-6'>
-        <h3
-          className='text-xl font-semibold mb-4 text-center'
-          style={{
-            color: themeColors.text.primary,
-            fontFamily: cssVars.fontPlayfair,
-          }}
-        >
-          {chartType === 'birth'
-            ? 'Birth Chart (Lagna Kundali)'
-            : `Lal Kitaab Varshphal (${selectedYear})`}
-        </h3>
+        <div className='flex flex-wrap items-center justify-center gap-4 mb-4'>
+          <h3
+            className='text-xl font-semibold text-center'
+            style={{
+              color: themeColors.text.primary,
+              fontFamily: cssVars.fontPlayfair,
+            }}
+          >
+            {chartType === 'birth'
+              ? 'Birth Chart (Lagna Kundali)'
+              : `Lal Kitaab Varshphal (${selectedYear})`}
+          </h3>
+          <button
+            type='button'
+            onClick={handleExportPdf}
+            disabled={isExportingPdf}
+            className='inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all disabled:opacity-60'
+            style={{
+              backgroundColor: themeColors.brand.accent,
+              color: '#fff',
+            }}
+          >
+            {isExportingPdf ? (
+              <>
+                <svg className='animate-spin h-4 w-4' viewBox='0 0 24 24' fill='none'>
+                  <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4' />
+                  <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z' />
+                </svg>
+                Exporting…
+              </>
+            ) : (
+              <>
+                <svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
+                </svg>
+                Export to PDF
+              </>
+            )}
+          </button>
+        </div>
         <div className='flex justify-center w-full'>
           <div className='flex justify-center items-center h-120 min-w-120'>
             {chartStyle === 'north' ? (
