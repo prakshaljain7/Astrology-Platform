@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Sidebar } from "@/components/dashboard/Sidebar";
+import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { KundaliDataProvider } from "@/context/KundaliDataContext";
@@ -45,10 +45,7 @@ export default function DashboardLayout({
   return (
     <KundaliDataProvider>
       <div className="min-h-screen aurora-bg">
-        <Sidebar />
-        <main className="ml-64 min-h-screen">
-          {children}
-        </main>
+        <DashboardShell>{children}</DashboardShell>
       </div>
     </KundaliDataProvider>
   );
