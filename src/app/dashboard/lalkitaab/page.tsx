@@ -486,8 +486,8 @@ export default function LalKitaabPage() {
       )}
 
       {/* Single chart — Birth Chart or Varshphal per selection */}
-      <div className='glass-card rounded-xl p-6 mb-6'>
-        <div className='flex flex-wrap items-center justify-center gap-4 mb-4'>
+      <div className='glass-card mb-6 rounded-xl p-4 sm:p-6'>
+        <div className='mb-4 flex flex-wrap items-center justify-center gap-4'>
           <h3
             className='text-xl font-semibold text-center'
             style={{
@@ -527,8 +527,8 @@ export default function LalKitaabPage() {
             )}
           </button>
         </div>
-        <div className='flex justify-center w-full'>
-          <div className='flex justify-center items-center h-120 min-w-120'>
+        <div className='flex w-full min-w-0 justify-center overflow-x-hidden'>
+          <div className='w-full min-w-0 max-w-full [&_svg]:mx-auto [&_svg]:block [&_svg]:h-auto [&_svg]:max-w-full [&_svg]:w-full'>
             {chartStyle === 'north' ? (
               <NorthIndianChartSvg
                 planets={

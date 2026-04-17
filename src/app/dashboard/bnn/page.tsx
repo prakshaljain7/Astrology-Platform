@@ -140,7 +140,7 @@ export default function BnnPage() {
   // Render no data state
   if (!hasData) {
     return (
-      <div className='p-8'>
+      <div className='p-2'>
         {/* Header */}
         <div className='mb-8'>
           <h1
@@ -231,7 +231,7 @@ export default function BnnPage() {
   const years = Object.keys(groupedEvents).sort();
 
   return (
-    <div className='p-8'>
+    <div className='p-2'>
       {/* Header */}
       <div className='mb-8'>
         <h1
@@ -251,7 +251,7 @@ export default function BnnPage() {
       {/* Birth Details Summary */}
       {formData && (
         <div
-          className='glass-card rounded-xl p-4 mb-6 flex flex-wrap gap-4 items-center'
+          className='glass-card rounded-xl p-2 mb-6 flex flex-wrap gap-4 items-center'
           style={{ borderLeft: `4px solid ${themeColors.brand.accent}` }}
         >
           <div className='flex items-center gap-2'>
@@ -489,8 +489,8 @@ export default function BnnPage() {
       {/* Directional Chart - Show when kundali data is available */}
       {kundaliData && kundaliData.planets && kundaliData.ascendant && (
         <div className='mb-6'>
-          <BnnDirectionalChart 
-            planets={kundaliData.planets} 
+          <BnnDirectionalChart
+            planets={kundaliData.planets}
             ascendantSign={kundaliData.ascendant.sign}
           />
         </div>

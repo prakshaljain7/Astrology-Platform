@@ -250,53 +250,85 @@ export function VimshotriDasha({
         >
           {/* Mahadasha Header - Clickable */}
           <div
-            className='p-4 flex items-center gap-4 cursor-pointer hover:bg-black/5 transition-colors'
+            className='p-4 flex flex-col gap-3 cursor-pointer hover:bg-black/5 transition-colors sm:flex-row sm:items-center sm:gap-4'
             onClick={() => fetchAntardasha(dasha)}
           >
-            <div
-              className='w-12 h-12 rounded-full flex items-center justify-center font-bold text-white text-lg shrink-0'
-              style={{ backgroundColor: getPlanetColor(dasha.lord) }}
-            >
-              {dasha.lord.charAt(0).toUpperCase()}
-            </div>
-            <div className='flex-1 min-w-0'>
-              <div className='flex items-center gap-2 flex-wrap'>
-                <h4
-                  className='font-semibold text-lg'
-                  style={{ color: themeColors.text.primary }}
-                >
-                  {dasha.lord} Maha Dasha
-                </h4>
-                {dasha.current && (
-                  <span
-                    className='px-2 py-0.5 rounded-full text-xs font-bold'
-                    style={{
-                      backgroundColor: getPlanetColor(dasha.lord),
-                      color: '#ffffff',
-                    }}
+            <div className='flex min-w-0 flex-1 items-start gap-4'>
+              <div
+                className='flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-lg font-bold text-white'
+                style={{ backgroundColor: getPlanetColor(dasha.lord) }}
+              >
+                {dasha.lord.charAt(0).toUpperCase()}
+              </div>
+              <div className='min-w-0 flex-1'>
+                <div className='flex items-start justify-between gap-2'>
+                  <div className='flex min-w-0 flex-wrap items-center gap-2'>
+                    <h4
+                      className='text-lg font-semibold'
+                      style={{ color: themeColors.text.primary }}
+                    >
+                      {dasha.lord} Maha Dasha
+                    </h4>
+                    {dasha.current && (
+                      <span
+                        className='rounded-full px-2 py-0.5 text-xs font-bold'
+                        style={{
+                          backgroundColor: getPlanetColor(dasha.lord),
+                          color: '#ffffff',
+                        }}
+                      >
+                        CURRENT
+                      </span>
+                    )}
+                  </div>
+                  <svg
+                    className={`mt-0.5 h-5 w-5 shrink-0 transition-transform sm:hidden ${expandedMahadasha === dasha.lord ? 'rotate-180' : ''}`}
+                    style={{ color: themeColors.text.muted }}
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
                   >
-                    CURRENT
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M19 9l-7 7-7-7'
+                    />
+                  </svg>
+                </div>
+                <div className='mt-1 flex flex-wrap gap-4'>
+                  <p
+                    className='text-sm'
+                    style={{ color: themeColors.text.secondary }}
+                  >
+                    <span className='font-medium'>Start:</span>{' '}
+                    {formatDate(dasha.start)}
+                  </p>
+                  <p
+                    className='text-sm'
+                    style={{ color: themeColors.text.secondary }}
+                  >
+                    <span className='font-medium'>End:</span>{' '}
+                    {formatDate(dasha.end)}
+                  </p>
+                </div>
+                <div className='mt-2 sm:hidden'>
+                  <span
+                    className='text-lg font-bold'
+                    style={{ color: getPlanetColor(dasha.lord) }}
+                  >
+                    {dasha.duration}
                   </span>
-                )}
-              </div>
-              <div className='flex flex-wrap gap-4 mt-1'>
-                <p
-                  className='text-sm'
-                  style={{ color: themeColors.text.secondary }}
-                >
-                  <span className='font-medium'>Start:</span>{' '}
-                  {formatDate(dasha.start)}
-                </p>
-                <p
-                  className='text-sm'
-                  style={{ color: themeColors.text.secondary }}
-                >
-                  <span className='font-medium'>End:</span>{' '}
-                  {formatDate(dasha.end)}
-                </p>
+                  <p
+                    className='text-xs'
+                    style={{ color: themeColors.text.muted }}
+                  >
+                    Duration
+                  </p>
+                </div>
               </div>
             </div>
-            <div className='text-right shrink-0 flex items-center gap-3'>
+            <div className='hidden shrink-0 items-center gap-3 text-right sm:flex'>
               <div>
                 <span
                   className='text-lg font-bold'
@@ -311,9 +343,8 @@ export function VimshotriDasha({
                   Duration
                 </p>
               </div>
-              {/* Expand/Collapse Icon */}
               <svg
-                className={`w-5 h-5 transition-transform ${expandedMahadasha === dasha.lord ? 'rotate-180' : ''}`}
+                className={`h-5 w-5 transition-transform ${expandedMahadasha === dasha.lord ? 'rotate-180' : ''}`}
                 style={{ color: themeColors.text.muted }}
                 fill='none'
                 viewBox='0 0 24 24'
